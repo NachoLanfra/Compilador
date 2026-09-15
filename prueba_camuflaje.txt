@@ -1,0 +1,19 @@
+{{ --- PRUEBA DE CAMUFLAJE Y FORMATOS LIMITE --- }}
+function trampas()
+begin
+    {{ 1. Identificadores que contienen palabras reservadas }}
+    ushortint class_nueva := 1$us;
+    doublef funcion_begin := 2.0d+1;
+    
+    {{ 2. Flotantes exóticos válidos según Tema 8 }}
+    doublef sin_cero_inicial = .99d-9;
+    doublef ceros_demas = 000.5d+0;
+    
+    {{ 3. El string vacío y el string con un solo espacio }}
+    pout = '';
+    pout = ' ';
+    
+    {{ 4. Inception: Strings vs Comentarios }}
+    {{ pout = 'este string nunca existio porque es un comentario'; }}
+    pout = 'este {{comentario}} es falso porque esta en un string';
+end

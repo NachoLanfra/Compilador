@@ -1,0 +1,22 @@
+{{ --- PRUEBA FINAL: OPERADORES RESTANTES Y SINTAXIS ASFIXIANTE --- }}
+class prueba_final
+begin
+    function asfixia(a,b,c)
+    begin
+        {{ 1. Los relacionales faltantes pegados al código }}
+        if(a>b)
+            a>=b;
+        end_if
+        
+        {{ 2. El operador Distinto (si tu lenguaje lo soporta como != o <>) }}
+        if(c!=10$us)
+            ret 1.0d+0;
+        end_if
+
+        {{ 3. Aritmética extrema y puntuación sin respirar }}
+        resultado=a*b/c-10$us+20$us;
+        
+        {{ 4. Llamada a función ultra comprimida }}
+        llamar_funcion(resultado,b,1$us);
+    end
+end

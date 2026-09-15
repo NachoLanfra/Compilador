@@ -1,0 +1,17 @@
+{{ --- PRUEBA DE OPERADORES PEGADOS Y AMBIGUEDAD --- }}
+class pegados
+begin
+    {{ 1. Operadores compuestos vs simples }}
+    a:=b;
+    a : = b;
+    
+    {{ 2. Paréntesis y comparadores sin respirar }}
+    if(contador<=10$us)
+    if(contador< =10$us)
+    
+    {{ 3. Operadores aritméticos en cadena }}
+    resultado=a+-b;
+    
+    {{ 4. Comentarios fusionados con código }}
+    begin{{este comentario esta pegado a la palabra}}end
+end
