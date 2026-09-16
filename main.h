@@ -5,9 +5,6 @@
 #include <fstream>
 #include <unordered_map>
 
-// Tipo de dato de la Tabla de Simbolos
-// (movido acá porque lo necesitan tanto main.cpp como gramatica.y,
-//  vía el %union del parser)
 struct EntradaTS {
     std::string lexema;
 };

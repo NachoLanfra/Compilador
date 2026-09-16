@@ -158,9 +158,6 @@ factor : ID
        | ID '=' '(' expresion_restr ')'
        ;
 
-/* Copia de expresion/termino/factor SIN la alternativa de asignación,
-   para que adentro del parentesis del tema 17 no se pueda anidar otra
-   asignacion-en-expresion (restriccion explicita del enunciado) */
 expresion_restr : expresion_restr '+' termino_restr
                  | expresion_restr '-' termino_restr
                  | termino_restr
