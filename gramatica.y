@@ -29,14 +29,14 @@ prog : ID sent_decl_lista PR_BEGIN sent_ejec_lista PR_END ';'
      | ID sent_decl_lista error sent_ejec_lista PR_END ';'
       {
            std::cerr << "Linea " << LINEA_ACTUAL
-                     << ": Error sintactico falta begin principal. "
+                     << ": Error: falta 'begin' o esta mal formada la seccion declarativa del programa."
                      << std::endl;
            yyerrok;
       }
      | ID sent_decl_lista PR_BEGIN sent_ejec_lista error
       {
            std::cerr << "Linea " << LINEA_ACTUAL
-                     << ": Error sintactico falta end final. "
+                     << ": Error: falta 'end' final del programa."
                      << std::endl;
            yyerrok;
       }
@@ -49,7 +49,7 @@ sent_decl_lista
     | sent_decl_lista error ';'
       {
           std::cerr << "Linea " << LINEA_ACTUAL
-                    << ": Error sintactico en declaracion. "
+                    << ": Error: sentencia declarativa mal formada. "
                     << "Se descartan tokens hasta ';'."
                     << std::endl;
           yyerrok;
@@ -77,7 +77,7 @@ decl_variables
     | tipo error ';'
       {
           std::cerr << "Linea " << LINEA_ACTUAL 
-                    << ": Error en la lista de variables. Revise las comas y los identificadores." 
+                    << ": Error: declaracion de variables mal formada." 
                     << std::endl;
           yyerrok;
       }
@@ -89,33 +89,18 @@ lista_params_formales : lista_params_formales ',' tipo ID
 
 decl_funcion 
     : tipo PR_FUNCTION ID '(' lista_params_formales ')' sent_decl_lista PR_BEGIN sent_ejec_lista PR_END ';'
-    | tipo PR_FUNCTION ID error lista_params_formales ')' sent_decl_lista PR_BEGIN sent_ejec_lista PR_END ';'
+    | tipo PR_FUNCTION ID error PR_END ';'
       { 
-          std::cerr << "Linea " << LINEA_ACTUAL << ": Error: Falta '(' antes de los parametros formales." << std::endl; 
-          yyerrok; 
-      }
-    | tipo PR_FUNCTION ID '(' lista_params_formales error sent_decl_lista PR_BEGIN sent_ejec_lista PR_END ';'
-      { 
-          std::cerr << "Linea " << LINEA_ACTUAL << ": Error: Falta ')' despues de los parametros formales." << std::endl; 
-          yyerrok; 
-      }
-    | tipo PR_FUNCTION ID '(' lista_params_formales ')' sent_decl_lista error sent_ejec_lista PR_END ';'
-      { 
-          std::cerr << "Linea " << LINEA_ACTUAL << ": Error: Falta 'begin' para iniciar el cuerpo de la funcion." << std::endl; 
+          std::cerr << "Linea " << LINEA_ACTUAL << ": Error: declaracion de funcion mal formada." << std::endl; 
           yyerrok; 
       }
     ;
 
 decl_clase 
     : PR_CLASS ID PR_BEGIN clase_item_lista PR_END ';'
-    | PR_CLASS ID error clase_item_lista PR_END ';'
+    | PR_CLASS ID error PR_END ';'
       { 
-          std::cerr << "Linea " << LINEA_ACTUAL << ": Error: Falta 'begin' en la declaracion de la clase." << std::endl; 
-          yyerrok; 
-      }
-    | PR_CLASS ID PR_BEGIN clase_item_lista error ';'
-      { 
-          std::cerr << "Linea " << LINEA_ACTUAL << ": Error: Falta 'end' en la declaracion de la clase." << std::endl; 
+          std::cerr << "Linea " << LINEA_ACTUAL << ": Error: declaracion de clase mal formada." << std::endl; 
           yyerrok; 
       }
     ;
@@ -128,19 +113,9 @@ clase_item
     : tipo ID ';'
     | tipo ID '(' lista_params_formales ')' sent_decl_lista PR_BEGIN sent_ejec_lista PR_END ';'
     | extends_clause
-    | tipo ID error lista_params_formales ')' sent_decl_lista PR_BEGIN sent_ejec_lista PR_END ';'
-      {
-          std::cerr << "Linea " << LINEA_ACTUAL << ": Error: Falta '(' en la declaracion del metodo." << std::endl;
-          yyerrok;
-      }
-    | tipo ID '(' lista_params_formales error sent_decl_lista PR_BEGIN sent_ejec_lista PR_END ';'
-      {
-          std::cerr << "Linea " << LINEA_ACTUAL << ": Error: Falta ')' despues de los parametros del metodo." << std::endl;
-          yyerrok;
-      }
     | tipo error ';'
       {
-          std::cerr << "Linea " << LINEA_ACTUAL << ": Error en la declaracion del atributo de la clase." << std::endl;
+          std::cerr << "Linea " << LINEA_ACTUAL << ": Error: declaracion de atributo o metodo mal formada." << std::endl;
           yyerrok;
       }
     ;
@@ -150,7 +125,7 @@ extends_clause
     | PR_EXTENDS error ';'
       {
           std::cerr << "Linea " << LINEA_ACTUAL 
-                    << ": Error: Lista de clases invalida despues de la palabra 'extends'." 
+                    << ": Error: clausula 'extends' mal formada." 
                     << std::endl;
           yyerrok;
       }
@@ -158,19 +133,9 @@ extends_clause
 
 decl_typedef 
     : PR_TYPEDEF ID '=' '[' lista_valores ']' ';'
-    | PR_TYPEDEF ID error '[' lista_valores ']' ';'
+    | PR_TYPEDEF error ';'
       {
-          std::cerr << "Linea " << LINEA_ACTUAL << ": Error: Falta '=' en la declaracion de typedef." << std::endl;
-          yyerrok;
-      }
-    | PR_TYPEDEF ID '=' error lista_valores ']' ';'
-      {
-          std::cerr << "Linea " << LINEA_ACTUAL << ": Error: Falta '[' para iniciar los valores del typedef." << std::endl;
-          yyerrok;
-      }
-    | PR_TYPEDEF ID '=' '[' lista_valores error ';'
-      {
-          std::cerr << "Linea " << LINEA_ACTUAL << ": Error: Falta ']' al final de la lista de valores del typedef." << std::endl;
+          std::cerr << "Linea " << LINEA_ACTUAL << ": Error: declaracion de typedef mal formada." << std::endl;
           yyerrok;
       }
     ;
@@ -186,7 +151,7 @@ sent_ejec_lista
     | sent_ejec_lista error ';'
       {
           std::cerr << "Linea " << LINEA_ACTUAL
-                    << ": Error sintactico en sentencia. "
+                    << ": Error: sentencia ejecutable mal formada. "
                     << "Se descartan tokens hasta ';'."
                     << std::endl;
           yyerrok;
@@ -205,48 +170,32 @@ sent_ejec : asignacion
 
 asignacion : ID OP_ASIGNACION expresion ';'
              { std::cout << "Asignacion (linea " << LINEA_ACTUAL << ")" << std::endl; }
-           | ID error expresion ';'
-                 { 
-                     std::cerr << "Linea " << LINEA_ACTUAL 
-                               << ": Error: Falta el operador ':=' en la asignacion o esta mal formado." 
-                               << std::endl; 
-                     yyerrok; 
-                 }
-           | ID OP_ASIGNACION error ';'
-                            { 
-                                std::cerr << "Linea " << LINEA_ACTUAL 
-                                          << ": Error: Falta una expresion válida." 
-                                          << std::endl; 
-                                yyerrok; 
-                            }
+           | ID error ';'
+             { 
+                 std::cerr << "Linea " << LINEA_ACTUAL 
+                           << ": Error: asignacion mal formada." 
+                           << std::endl; 
+                 yyerrok; 
+             }
           ;
 
 asignacion_atributo : ID '.' ID '=' expresion ';'
-    	  | ID '[' indice ']' '=' expresion ';'
-  		  | ID '.' ID error expresion ';'
-  		    {
-    		      std::cerr << "Linea " << LINEA_ACTUAL 
-		                    << ": Error: Falta el operador '=' en la asignacion de atributo." 
-    		                << std::endl;
-     		      yyerrok;
-    		}
-      
-  		  | ID '[' indice ']' error expresion ';'
-  		    {
-  		        std::cerr << "Linea " << LINEA_ACTUAL 
-  		                  << ": Error: Falta el operador '=' en la asignacion posicional." 
-		                    << std::endl;
-         		 yyerrok;
-    		  }
-      
-          | ID '[' error ']' '=' expresion ';'
-		      {
-         		 std::cerr << "Linea " << LINEA_ACTUAL 
-               		     << ": Error: Indice invalido o faltante dentro de los corchetes '[]'." 
-                   		 << std::endl;
-         		 yyerrok;
-     		  }
-    	  ;
+                     | ID '[' indice ']' '=' expresion ';'
+                     | ID '.' ID error ';'
+                       {
+                           std::cerr << "Linea " << LINEA_ACTUAL 
+                                     << ": Error: asignacion de atributo mal formada." 
+                                     << std::endl;
+                           yyerrok;
+                       }
+                     | ID '[' error ';'
+                       {
+                           std::cerr << "Linea " << LINEA_ACTUAL 
+                                     << ": Error: asignacion posicional mal formada." 
+                                     << std::endl;
+                           yyerrok;
+                       }
+                     ;
     
 indice : CTE_INT
        | ID
@@ -254,9 +203,9 @@ indice : CTE_INT
 
 retorno 
     : PR_RET '(' expresion ')' ';'
-    | PR_RET '(' expresion error ';'
+    | PR_RET error ';'
       { 
-          std::cerr << "Linea " << LINEA_ACTUAL << ": Error: Falta ')' en la sentencia ret." << std::endl; 
+          std::cerr << "Linea " << LINEA_ACTUAL << ": Error: sentencia 'ret' mal formada." << std::endl; 
           yyerrok; 
       }
     ;
@@ -264,14 +213,9 @@ retorno
 pout 
     : PR_POUT '(' CTE_STR ')' ';'
     | PR_POUT '(' expresion ')' ';'
-    | PR_POUT '(' CTE_STR error ';'
+    | PR_POUT error ';'
       { 
-          std::cerr << "Linea " << LINEA_ACTUAL << ": Error: Falta ')' en el pout." << std::endl; 
-          yyerrok; 
-      }
-    | PR_POUT '(' expresion error ';'
-      { 
-          std::cerr << "Linea " << LINEA_ACTUAL << ": Error: Falta ')' despues de la expresion en el pout." << std::endl; 
+          std::cerr << "Linea " << LINEA_ACTUAL << ": Error: sentencia 'pout' mal formada." << std::endl; 
           yyerrok; 
       }
     ;
@@ -294,53 +238,20 @@ comparador : OP_IGUAL_IGUAL
 seleccion
     : PR_IF '(' condicion ')' bloque_sent_ejec PR_END_IF ';'
     | PR_IF '(' condicion ')' bloque_sent_ejec PR_ELSE bloque_sent_ejec PR_END_IF ';'
-    | PR_IF '(' condicion error bloque_sent_ejec PR_END_IF ';'
+    | PR_IF error PR_END_IF ';'
       {
           std::cerr << "Linea " << LINEA_ACTUAL
-                    << ": Error: se esperaba ')' después de la condición del IF."
+                    << ": Error: sentencia 'if' mal formada o incompleta."
                     << std::endl;
           yyerrok;
       }
-    | PR_IF '(' error ')' bloque_sent_ejec PR_END_IF ';'
-      {
-          std::cerr << "Linea " << LINEA_ACTUAL
-                    << ": Error: se esperaba una condición dentro del IF."
-                    << std::endl;
-          yyerrok;
-      }
-     | PR_IF error condicion ')' bloque_sent_ejec PR_END_IF ';'
-           {
-               std::cerr << "Linea " << LINEA_ACTUAL
-                         << ": Error: se esperaba '()' después del IF."
-                         << std::endl;
-               yyerrok;
-           }
-     | PR_IF '(' condicion ')' bloque_sent_ejec error ';'
-           {
-               std::cerr << "Linea " << LINEA_ACTUAL
-                         << ": Error: se esperaba End_if después del bloque de sentencias ejecutable."
-                         << std::endl;
-               yyerrok;
-           }
-     | PR_IF '(' condicion ')' error PR_END_IF ';'
-           {
-               std::cerr << "Linea " << LINEA_ACTUAL
-                         << ": Error: se esperaba bloque de sentencia ejecutables despues del ')'."
-                         << std::endl;
-               yyerrok;
-           }
 ;
 
 repeat_while 
     : PR_REPEAT bloque_sent_ejec PR_WHILE '(' condicion ')' ';'
-    | PR_REPEAT bloque_sent_ejec error '(' condicion ')' ';'
+    | PR_REPEAT error ';'
       { 
-          std::cerr << "Linea " << LINEA_ACTUAL << ": Error: Falta 'while' despues del bloque repeat." << std::endl; 
-          yyerrok; 
-      }
-    | PR_REPEAT bloque_sent_ejec PR_WHILE '(' condicion error ';'
-      { 
-          std::cerr << "Linea " << LINEA_ACTUAL << ": Error: Falta ')' al final de la condicion del while." << std::endl; 
+          std::cerr << "Linea " << LINEA_ACTUAL << ": Error: sentencia 'repeat-while' mal formada." << std::endl; 
           yyerrok; 
       }
     ;
@@ -423,10 +334,10 @@ cte : CTE_INT
     ;
 
 invocacion : ID '(' lista_params_reales ')' lista_ctes_opcional
-           | ID '(' lista_params_reales error lista_ctes_opcional
+           | ID '(' error ')' lista_ctes_opcional
              {
                  std::cerr << "Linea " << LINEA_ACTUAL 
-                           << ": Error: Falta ')' en la invocacion a la funcion." 
+                           << ": Error: invocacion a funcion mal formada." 
                            << std::endl;
                  yyerrok;
              }
@@ -437,10 +348,10 @@ lista_params_reales : lista_params_reales ',' expresion
                      ;
 
 lista_ctes_opcional : '[' lista_constantes ']'
-                     | '[' lista_constantes error
+                     | '[' error ']'
                        {
                            std::cerr << "Linea " << LINEA_ACTUAL
-                                     << ": Error: Falta ']' en la lista de orden de evaluacion."
+                                     << ": Error: lista de orden de evaluacion mal formada."
                                      << std::endl;
                            yyerrok;
                        }
@@ -462,5 +373,5 @@ llamada_opcional : '(' lista_params_reales ')'
 %%
 
 void yyerror(const char *s) {
-    std::cerr << "Linea " << LINEA_ACTUAL << ": Error: " << s << std::endl;
+    (void)s;
 }

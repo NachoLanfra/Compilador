@@ -21,12 +21,6 @@ int LINEA_ACTUAL = 1;
 std::ifstream archivo;   // definición real (antes era parámetro de yylex, ahora es global)
 std::string lexema_actual = ""; // Meramente para debuggear, no es necesario para el funcionamiento del analizador léxico
 
-// NOTA: el enum TokenID que estaba acá se sacó. Los números de token ahora
-// los define bison automáticamente a partir del %token de gramatica.y, y
-// llegan vía "y.tab.h" (incluido arriba). Si dejábamos el enum manual acá,
-// íbamos a tener una redefinición de ID, CTE_INT, PR_IF, etc. contra lo que
-// genera bison, y no compila.
-
 // La tabla de referencias es de solo lectura y se carga al compilar
 const std::unordered_map<std::string, int> tabla_referencias = {
     {"if",       PR_IF},
@@ -40,11 +34,10 @@ const std::unordered_map<std::string, int> tabla_referencias = {
     {"function", PR_FUNCTION},
     {"ushortint", PR_USHORTINT},  
     {"doublef",   PR_DOUBLEF},
-    {"extends",   PR_EXTENDS},    // tema 30
-    {"typedef",   PR_TYPEDEF},    // tema 23
-    {"repeat",    PR_REPEAT},     // tema 13
-    {"while",     PR_WHILE},      // tema 13
-
+    {"extends",   PR_EXTENDS},   
+    {"typedef",   PR_TYPEDEF},   
+    {"repeat",    PR_REPEAT},   
+    {"while",     PR_WHILE},    
 };
 
 // Tabla de Símbolos
@@ -112,7 +105,7 @@ enum ColumnaMatriz {
 
 // Matriz de Transiciones de Estado
 std::array<std::array<int, CANT_COLUMNAS>, CANT_ESTADOS> matriz_estados = {{
-    {            9,            1,            2,            0, ESTADO_ERROR,            5,           18,           10, ESTADO_FINAL, ESTADO_FINAL,           11,           12,           13,            0,           14, ESTADO_ERROR, ESTADO_ERROR,            1,            1,            1,           16, ESTADO_ERROR },  // Estado 0
+    {            9,            1,            2,            0, ESTADO_ERROR, ESTADO_FINAL,           18,           10, ESTADO_FINAL, ESTADO_FINAL,           11,           12,           13,            0,           14, ESTADO_ERROR, ESTADO_ERROR,            1,            1,            1,           16, ESTADO_ERROR },  // Estado 0
     {            9,            1,            1, ESTADO_FINAL,            1, ESTADO_FINAL, ESTADO_FINAL, ESTADO_FINAL, ESTADO_FINAL, ESTADO_FINAL, ESTADO_FINAL, ESTADO_FINAL, ESTADO_FINAL, ESTADO_FINAL, ESTADO_FINAL, ESTADO_FINAL, ESTADO_FINAL,            1,            1,            1, ESTADO_FINAL, ESTADO_ERROR },  // Estado 1
     { ESTADO_ERROR, ESTADO_ERROR,            2, ESTADO_ERROR, ESTADO_ERROR,            5, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR,            3, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR },  // Estado 2
     { ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR,            4, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR },  // Estado 3
@@ -137,7 +130,7 @@ std::array<std::array<int, CANT_COLUMNAS>, CANT_ESTADOS> matriz_estados = {{
 
 // Matriz de Acciones Semanticas
 std::array<std::array<AccionSemantica, CANT_COLUMNAS>, CANT_ESTADOS> matriz_acciones = {{
-    {     A_ADD,     A_ADD,     A_ADD,    A_NONE,   A_ERROR,     A_ADD,     A_ADD,     A_ADD,     A_ATK,     A_ATK,     A_ADD,     A_ADD,     A_ADD,      A_NL,    A_NONE,   A_ERROR,   A_ERROR,     A_ADD,     A_ADD,     A_ADD,    A_NONE,   A_ERROR },  // Estado 0
+    {     A_ADD,     A_ADD,     A_ADD,    A_NONE,   A_ERROR,     A_ATK,     A_ADD,     A_ADD,     A_ATK,     A_ATK,     A_ADD,     A_ADD,     A_ADD,      A_NL,    A_NONE,   A_ERROR,   A_ERROR,     A_ADD,     A_ADD,     A_ADD,    A_NONE,   A_ERROR },  // Estado 0
     {     A_ADD,     A_ADD,     A_ADD,      A_ID,     A_ADD,      A_ID,      A_ID,      A_ID,      A_ID,      A_ID,      A_ID,      A_ID,      A_ID,      A_ID,      A_ID,      A_ID,      A_ID,      A_ADD,      A_ADD,      A_ADD,      A_ID,   A_ERROR },  // Estado 1
     {   A_ERROR,   A_ERROR,     A_ADD,   A_ERROR,   A_ERROR,     A_ADD,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,     A_ADD,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR },  // Estado 2
     {   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,     A_ADD,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR },  // Estado 3
@@ -193,6 +186,8 @@ int obtener_columna(char c) {
         case ')': return COL_OP_MULT_DIV_ETC;
         case '(': return COL_OP_MULT_DIV_ETC;
         case ';': return COL_OP_MULT_DIV_ETC;
+        case '[': return COL_OP_MULT_DIV_ETC;
+        case ']': return COL_OP_MULT_DIV_ETC;
         case '=': return COL_IGUAL;
         case '<': return COL_MENOR;
         case '>': return COL_MAYOR;
@@ -310,10 +305,6 @@ void a_error(char c) {
 }
 
 int yylex() { 
-    // Cosumidor de tokens
-    // (antes recibía "archivo" por parámetro; ahora usa la variable
-    //  global declarada en main.h, porque yyparse() llama a yylex()
-    //  siempre sin argumentos)
     int estado_actual = 0;
     // std::string lexema_actual = ""; // este es el que deberia ir en realidad
     lexema_actual = ""; // simplemente para debugear
@@ -499,9 +490,6 @@ int main(int argc, char* argv[]) {
 
     std::cout << "--- INICIANDO ANÁLISIS SINTÁCTICO ---" << std::endl;
 
-    // yyparse() (generado por bison) va pidiendo tokens llamando a yylex()
-    // internamente, las veces que necesite, hasta terminar o encontrar
-    // un error que no pueda recuperar.
     int resultado = yyparse();
 
     if (resultado == 0) {
@@ -521,8 +509,6 @@ int main(int argc, char* argv[]) {
     } else {
         for (const auto& par : tabla_simbolos) {
             std::cout << " -> " << par.first << std::endl;
-            // Más adelante, cuando el struct EntradaTS tenga atributos, 
-            // los imprimís usando: par.second.tipo_dato, etc.
         }
     }
     std::cout << "-----------------------------------------" << std::endl;

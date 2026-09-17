@@ -1,0 +1,68 @@
+progtest_errores
+
+ushortint a, b, c,;
+
+ushortint function suma(ushortint x ushortint y)
+begin
+ret(x+y);
+end;
+
+class base
+ushortint valor;
+end;
+
+class figura
+begin
+ushortint lado
+ushortint alto;
+end;
+
+class circulo
+begin
+ushortint radio;
+end;
+
+class cuadrado
+begin
+extends
+ushortint lado;
+end;
+
+typedef dias = [1$us,2$us,3$us;
+
+dias hoy;
+base obj1;
+
+begin
+
+a := 1$us;
+b := ;
+c := suma(a, b);
+
+obj1.valor 10$us;
+c := obj1.valor;
+
+obj1[0$us 20$us;
+c := obj1.valor;
+
+pout(a b;
+pout(c);
+
+ret(a;
+ret(a);
+
+if (a > b
+pout('mayor');
+end_if;
+
+repeat
+a := a + 1$us;
+while (a <= 5$us;
+
+c := suma(a b);
+c := suma(a,b);
+
+c := suma(a,b)[1$us 2$us];
+c := suma(a,b)[1$us,2$us];
+
+end;
