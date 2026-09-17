@@ -1,5 +1,6 @@
 %{
 #include <iostream>
+#include <string>
 #include "main.h"     /* EntradaTS, tabla_simbolos, LINEA_ACTUAL */
 
 int yylex();
@@ -11,6 +12,8 @@ void yyerror(const char *s);
 }
 
 %token <ts_ref> ID CTE_INT CTE_FLOAT CTE_STR
+
+%type <ts_ref> cte factor factor_restr
 %token PR_IF PR_ELSE PR_END_IF PR_BEGIN PR_END
 %token PR_POUT PR_RET PR_CLASS PR_FUNCTION PR_USHORTINT PR_DOUBLEF
 %token PR_EXTENDS PR_TYPEDEF PR_REPEAT PR_WHILE
@@ -21,9 +24,9 @@ void yyerror(const char *s);
 
 %%
 
-prog : ID sent_decl_lista PR_BEGIN sent_ejec_lista PR_END
+prog : ID sent_decl_lista PR_BEGIN sent_ejec_lista PR_END ';'
        { std::cout << "Se reconocio un programa" << std::endl; }
-     | ID sent_decl_lista error sent_ejec_lista PR_END
+     | ID sent_decl_lista error sent_ejec_lista PR_END ';'
       {
            std::cerr << "Linea " << LINEA_ACTUAL
                      << ": Error sintactico falta begin principal. "
@@ -274,7 +277,7 @@ pout
     ;
 
 bloque_sent_ejec : sent_ejec
-                 | PR_BEGIN sent_ejec_lista PR_END
+                 | PR_BEGIN sent_ejec_lista PR_END ';'
                  ;
 
 condicion : expresion comparador expresion
@@ -356,7 +359,25 @@ termino : termino '*' factor
 
 factor : ID
        | cte
-       | '-' cte
+       | '-' CTE_INT
+         {
+             std::cerr << "Linea " << LINEA_ACTUAL << ": Error semantico: la constante '"
+                       << $2->lexema << "' es de tipo USHORTINT (sin signo), "
+                       << "no admite el signo '-'." << std::endl;
+             $$ = $2; //Se guarda la cte como positiva, para futuras operaciones. Guarda un 12 por ej en vez de -12 invalido.
+         }
+       | '-' CTE_FLOAT
+         {
+             std::string lexema_neg = "-" + $2->lexema;
+
+             auto it = tabla_simbolos.find(lexema_neg);
+             if (it == tabla_simbolos.end()) {
+                 EntradaTS nueva_entrada;
+                 nueva_entrada.lexema = lexema_neg;
+                 it = tabla_simbolos.insert({lexema_neg, nueva_entrada}).first;
+             }
+             $$ = &(it->second);
+         }
        | invocacion
        | acceso_objeto
        | ID '=' '(' expresion_restr ')'
@@ -374,7 +395,25 @@ termino_restr : termino_restr '*' factor_restr
 
 factor_restr : ID
              | cte
-             | '-' cte
+             | '-' CTE_INT
+               {
+                   std::cerr << "Linea " << LINEA_ACTUAL << ": Error semantico: la constante '"
+                             << $2->lexema << "' es de tipo USHORTINT (sin signo), "
+                             << "no admite el signo '-'." << std::endl;
+                   $$ = $2;
+               }
+             | '-' CTE_FLOAT
+               {
+                   std::string lexema_neg = "-" + $2->lexema;
+
+                   auto it = tabla_simbolos.find(lexema_neg);
+                   if (it == tabla_simbolos.end()) {
+                       EntradaTS nueva_entrada;
+                       nueva_entrada.lexema = lexema_neg;
+                       it = tabla_simbolos.insert({lexema_neg, nueva_entrada}).first;
+                   }
+                   $$ = &(it->second);
+               }
              | invocacion
              | acceso_objeto
              ;
@@ -416,8 +455,8 @@ acceso_objeto : ID '.' ID llamada_opcional
               | ID '[' indice ']'
               ;
 
-llamada_opcional : '(' lista_params_reales ')'   /* b1.m(1$i, x) -> metodo */
-                  |                             /* b1.a        -> atributo */
+llamada_opcional : '(' lista_params_reales ')' 
+                  |                 
                   ;
 
 %%
