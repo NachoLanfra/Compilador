@@ -24,7 +24,7 @@ void yyerror(const char *s);
 prog : ID sent_decl_lista PR_BEGIN sent_ejec_lista PR_END
        { std::cout << "Se reconocio un programa" << std::endl; }
      ;
-
+     
 /* ---------- sentencias declarativas ---------- */
 
 sent_decl_lista
@@ -49,6 +49,7 @@ sent_decl : decl_variables
 
 tipo : PR_USHORTINT
      | PR_DOUBLEF
+     | ID
      ;
 
 lista_ids : lista_ids ',' ID
