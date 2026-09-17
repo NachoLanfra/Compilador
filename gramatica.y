@@ -13,7 +13,7 @@ void yyerror(const char *s);
 
 %token <ts_ref> ID CTE_INT CTE_FLOAT CTE_STR
 
-%type <ts_ref> cte factor factor_restr
+%type <ts_ref> cte factor factor_restr invocacion acceso_objeto
 %token PR_IF PR_ELSE PR_END_IF PR_BEGIN PR_END
 %token PR_POUT PR_RET PR_CLASS PR_FUNCTION PR_USHORTINT PR_DOUBLEF
 %token PR_EXTENDS PR_TYPEDEF PR_REPEAT PR_WHILE
@@ -462,6 +462,5 @@ llamada_opcional : '(' lista_params_reales ')'
 %%
 
 void yyerror(const char *s) {
-    errores_sintacticos++;
     std::cerr << "Linea " << LINEA_ACTUAL << ": Error: " << s << std::endl;
 }
