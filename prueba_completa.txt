@@ -1,0 +1,50 @@
+progtest
+ushortint a, b, c, d, e, resultado;
+doublef pi;
+
+ushortint function sumar(ushortint x, ushortint y)
+begin
+ret(x+y);
+end;
+
+class base
+begin
+ushortint valor;
+ushortint obtener(ushortint p)
+begin
+ret(p);
+end;
+end;
+
+class derivada
+begin
+extends base;
+ushortint extra;
+end;
+
+typedef dias = [1$us,2$us,3$us,4$us,5$us,6$us,7$us];
+
+dias hoy;
+base obj1;
+derivada obj2;
+
+begin
+a := 1$us;
+b := 2$us;
+c := sumar(a,b);
+d := sumar(a,b)[2$us,1$us];
+resultado := b=(c+a)*e=(c/2$us);
+obj1.valor = 10$us;
+obj1[0$us] = 20$us;
+c := obj1.valor;
+c := obj1.obtener(a);
+if (c == 10$us)
+pout('es diez');
+else
+pout(c);
+end_if;
+repeat
+c := c + 1$us;
+while (c <= 5$us);
+pout(pi);
+end

@@ -98,11 +98,6 @@ decl_funcion
           std::cerr << "Linea " << LINEA_ACTUAL << ": Error: Falta 'begin' para iniciar el cuerpo de la funcion." << std::endl; 
           yyerrok; 
       }
-    | tipo PR_FUNCTION ID '(' lista_params_formales ')' sent_decl_lista PR_BEGIN sent_ejec_lista error ';'
-      { 
-          std::cerr << "Linea " << LINEA_ACTUAL << ": Error: Falta 'end' para cerrar la funcion." << std::endl; 
-          yyerrok; 
-      }
     ;
 
 decl_clase 
@@ -400,6 +395,13 @@ lista_params_reales : lista_params_reales ',' expresion
                      ;
 
 lista_ctes_opcional : '[' lista_constantes ']'
+                     | '[' lista_constantes error
+                       {
+                           std::cerr << "Linea " << LINEA_ACTUAL
+                                     << ": Error: Falta ']' en la lista de orden de evaluacion."
+                                     << std::endl;
+                           yyerrok;
+                       }
                      |
                      ;
 
@@ -411,12 +413,13 @@ acceso_objeto : ID '.' ID llamada_opcional
               | ID '[' indice ']'
               ;
 
-llamada_opcional : '(' expresion ')'   
-                  |                             
+llamada_opcional : '(' lista_params_reales ')'   /* b1.m(1$i, x) -> metodo */
+                  |                             /* b1.a        -> atributo */
                   ;
 
 %%
 
 void yyerror(const char *s) {
+    errores_sintacticos++;
     std::cerr << "Linea " << LINEA_ACTUAL << ": Error: " << s << std::endl;
 }
