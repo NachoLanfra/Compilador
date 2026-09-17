@@ -23,6 +23,20 @@ void yyerror(const char *s);
 
 prog : ID sent_decl_lista PR_BEGIN sent_ejec_lista PR_END
        { std::cout << "Se reconocio un programa" << std::endl; }
+     | ID sent_decl_lista error sent_ejec_lista PR_END
+      {
+           std::cerr << "Linea " << LINEA_ACTUAL
+                     << ": Error sintactico falta begin principal. "
+                     << std::endl;
+           yyerrok;
+      }
+     | ID sent_decl_lista PR_BEGIN sent_ejec_lista error
+      {
+           std::cerr << "Linea " << LINEA_ACTUAL
+                     << ": Error sintactico falta end final. "
+                     << std::endl;
+           yyerrok;
+      }
      ;
      
 /* ---------- sentencias declarativas ---------- */
@@ -43,7 +57,6 @@ sent_decl_lista
 sent_decl : decl_variables
           | decl_funcion
           | decl_clase
-          | decl_objeto
           | decl_typedef
           ;
 
@@ -62,17 +75,6 @@ decl_variables
       {
           std::cerr << "Linea " << LINEA_ACTUAL 
                     << ": Error en la lista de variables. Revise las comas y los identificadores." 
-                    << std::endl;
-          yyerrok;
-      }
-    ;
-
-decl_objeto 
-    : ID lista_ids ';'
-    | ID error ';'
-      {
-          std::cerr << "Linea " << LINEA_ACTUAL 
-                    << ": Error en la lista de instanciacion de objetos." 
                     << std::endl;
           yyerrok;
       }
