@@ -9,7 +9,7 @@
 #include "main.h"    // EntradaTS, tabla_simbolos, LINEA_ACTUAL, archivo (declaraciones compartidas)
 #include "y.tab.h"   // ID, CTE_INT, PR_IF, etc. -- generado por bison a partir de gramatica.y
 
-// Constates para matrices
+// Constantes para las matrices del autómata
 const int CANT_ESTADOS = 20;  
 const int CANT_COLUMNAS = 22;  
 
@@ -18,8 +18,8 @@ const int ESTADO_ERROR = -1;
 const int ESTADO_FINAL = 99; 
 
 int LINEA_ACTUAL = 1;
-std::ifstream archivo;   // definición real (antes era parámetro de yylex, ahora es global)
-std::string lexema_actual = ""; // Meramente para debuggear, no es necesario para el funcionamiento del analizador léxico
+std::ifstream archivo;
+std::string lexema_actual = "";
 
 // La tabla de referencias es de solo lectura y se carga al compilar
 const std::unordered_map<std::string, int> tabla_referencias = {
@@ -232,12 +232,15 @@ bool a_val_int(const std::string& cadena) {
         std::string num_str = cadena.substr(0, pos); // Extrae la parte antes del '$'
         int valor = std::stoi(num_str);
         if (valor < 0 || valor > 255) { // Verifica si está fuera del rango
-            std::cerr << "Error: Entero fuera de rango (0-255): " << valor << std::endl;
+            std::cerr << "Error Léxico en línea " << LINEA_ACTUAL
+            << ": Entero fuera de rango (0-255): "
+            << valor << std::endl;
             return false; 
         }
         return true; 
     } catch (const std::exception& e) {
-        std::cerr << "Error convirtiendo a entero: " << cadena << std::endl;
+        std::cerr << "Error Léxico en línea " << LINEA_ACTUAL
+        << ": Error convirtiendo a entero: " << cadena << std::endl;
         return false;
     }
 }
@@ -263,16 +266,20 @@ bool a_val_float(std::string& cadena) {
         double abs_valor = std::fabs(valor);
 
         if (abs_valor != 0.0 && (abs_valor < MIN_NORMAL || abs_valor > MAX_NORMAL)) { // Verifica si está fuera del rango de 64 bits
-            std::cerr << "Error: Flotante fuera de rango de 64 bits: " << cadena << std::endl;
+            std::cerr << "Error Léxico en línea " << LINEA_ACTUAL
+        << ": Flotante fuera de rango de 64 bits: "
+        << cadena << std::endl;
             return false;
         }
         return true; 
-
+    
     } catch (const std::out_of_range& e) { 
-        std::cerr << "Error: Flotante fuera de rango de 64 bits: " << cadena << std::endl;
+        std::cerr << "Error Léxico en línea " << LINEA_ACTUAL
+        << ": Flotante fuera de rango de 64 bits: " << cadena << std::endl;
         return false;
     } catch (...) {
-        std::cerr << "Error desconocido al convertir flotante: " << cadena << std::endl;
+        std::cerr << "Error Léxico en línea " << LINEA_ACTUAL
+        << ": Error desconocido al convertir flotante: " << cadena << std::endl;
         return false;
     }
 }
@@ -306,8 +313,7 @@ void a_error(char c) {
 
 int yylex() { 
     int estado_actual = 0;
-    // std::string lexema_actual = ""; // este es el que deberia ir en realidad
-    lexema_actual = ""; // simplemente para debugear
+    lexema_actual = ""; 
     char c;
 
     while (archivo.get(c)) {
@@ -461,11 +467,19 @@ int yylex() {
                     
             default: // Si es un lexema incompleto, imprimimos un mensaje de error y descartamos el lexema, ejemplo: cadena sin cerrar, comentario sin cerrar, etc.
                 if (estado_actual == 16) {
-                    std::cerr << "Error Léxico: cadena sin cerrar al final del archivo: '" << lexema_actual << "'" << std::endl;
-                } else if (estado_actual == 14 || estado_actual == 15 || estado_actual == 17) {
-                    std::cerr << "Error Léxico: comentario sin cerrar al final del archivo." << std::endl;
+                    std::cerr << "Error Léxico en línea " << LINEA_ACTUAL
+                    << ": cadena sin cerrar al final del archivo: '"
+                    << lexema_actual << "'" << std::endl;
+                } else if (estado_actual == 14 ||
+                    estado_actual == 15 ||
+                    estado_actual == 17) {
+                    std::cerr << "Error Léxico en línea " << LINEA_ACTUAL
+                    << ": comentario sin cerrar al final del archivo."
+                    << std::endl;
                 } else {
-                    std::cerr << "Error Léxico: fin de archivo inesperado, lexema incompleto descartado: '" << lexema_actual << "'" << std::endl;
+                    std::cerr << "Error Léxico en línea " << LINEA_ACTUAL
+                    << ": fin de archivo inesperado, lexema incompleto descartado: '"
+                    << lexema_actual << "'" << std::endl;
                 }
                 break;
         }
