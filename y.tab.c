@@ -674,18 +674,18 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,    27,    27,    29,    36,    48,    49,    57,    60,    61,
-      62,    63,    66,    67,    68,    71,    72,    76,    77,    86,
-      87,    91,    92,   100,   101,   108,   109,   113,   114,   115,
-     116,   124,   125,   135,   136,   143,   144,   150,   151,   159,
-     162,   163,   164,   165,   166,   167,   168,   171,   173,   182,
-     183,   184,   191,   200,   201,   205,   206,   214,   215,   216,
-     223,   224,   227,   230,   231,   232,   233,   234,   235,   239,
-     240,   241,   251,   252,   261,   262,   263,   266,   267,   268,
-     271,   272,   273,   280,   292,   293,   294,   297,   298,   299,
-     302,   303,   304,   307,   308,   309,   316,   328,   329,   332,
-     333,   336,   337,   346,   347,   350,   351,   358,   361,   362,
-     365,   366,   369,   370
+       0,    28,    28,    32,    39,    51,    52,    60,    64,    65,
+      66,    67,    71,    72,    73,    77,    78,    82,    87,    97,
+      98,   102,   108,   118,   123,   133,   134,   138,   139,   141,
+     142,   152,   157,   167,   172,   182,   183,   189,   190,   198,
+     202,   203,   204,   205,   206,   207,   208,   212,   217,   227,
+     232,   237,   244,   254,   255,   259,   264,   274,   279,   284,
+     294,   295,   299,   303,   304,   305,   306,   307,   308,   312,
+     317,   323,   333,   338,   350,   351,   352,   356,   357,   358,
+     362,   363,   364,   375,   392,   393,   394,   398,   399,   400,
+     404,   405,   406,   410,   411,   412,   423,   440,   441,   445,
+     446,   450,   451,   461,   462,   466,   467,   474,   478,   479,
+     483,   484,   488,   489
 };
 #endif
 
@@ -1418,35 +1418,37 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* prog: ID sent_decl_lista PR_BEGIN sent_ejec_lista PR_END ';'  */
-#line 28 "gramatica.y"
-       { std::cout << "Se reconocio un programa" << std::endl; }
-#line 1424 "y.tab.c"
+#line 29 "gramatica.y"
+      {
+          std::cout << "Se reconocio un programa" << std::endl;
+      }
+#line 1426 "y.tab.c"
     break;
 
   case 3: /* prog: ID sent_decl_lista error sent_ejec_lista PR_END ';'  */
-#line 30 "gramatica.y"
+#line 33 "gramatica.y"
       {
-           std::cerr << "Linea " << LINEA_ACTUAL
-                     << ": Error: falta 'begin' o esta mal formada la seccion declarativa del programa."
-                     << std::endl;
-           yyerrok;
+          std::cerr << "Linea " << LINEA_ACTUAL
+                    << ": Error: falta 'begin' o esta mal formada la seccion declarativa del programa."
+                    << std::endl;
+          yyerrok;
       }
-#line 1435 "y.tab.c"
+#line 1437 "y.tab.c"
     break;
 
   case 4: /* prog: ID sent_decl_lista PR_BEGIN sent_ejec_lista error  */
-#line 37 "gramatica.y"
+#line 40 "gramatica.y"
       {
-           std::cerr << "Linea " << LINEA_ACTUAL
-                     << ": Error: falta 'end' final del programa."
-                     << std::endl;
-           yyerrok;
+          std::cerr << "Linea " << LINEA_ACTUAL
+                    << ": Error: falta 'end' final del programa."
+                    << std::endl;
+          yyerrok;
       }
-#line 1446 "y.tab.c"
+#line 1448 "y.tab.c"
     break;
 
   case 6: /* sent_decl_lista: sent_decl_lista error ';'  */
-#line 50 "gramatica.y"
+#line 53 "gramatica.y"
       {
           std::cerr << "Linea " << LINEA_ACTUAL
                     << ": Error: sentencia declarativa mal formada. "
@@ -1454,69 +1456,122 @@ yyreduce:
                     << std::endl;
           yyerrok;
       }
-#line 1458 "y.tab.c"
+#line 1460 "y.tab.c"
     break;
 
-  case 18: /* decl_variables: tipo error ';'  */
-#line 78 "gramatica.y"
+  case 17: /* decl_variables: tipo lista_ids ';'  */
+#line 83 "gramatica.y"
       {
-          std::cerr << "Linea " << LINEA_ACTUAL 
-                    << ": Error: declaracion de variables mal formada." 
-                    << std::endl;
-          yyerrok;
+          std::cout << "Declaracion de variables (linea "
+                    << LINEA_ACTUAL << ")" << std::endl;
       }
 #line 1469 "y.tab.c"
     break;
 
-  case 22: /* decl_funcion: tipo PR_FUNCTION ID error PR_END ';'  */
-#line 93 "gramatica.y"
-      { 
-          std::cerr << "Linea " << LINEA_ACTUAL << ": Error: declaracion de funcion mal formada." << std::endl; 
-          yyerrok; 
-      }
-#line 1478 "y.tab.c"
-    break;
-
-  case 24: /* decl_clase: PR_CLASS ID error PR_END ';'  */
-#line 102 "gramatica.y"
-      { 
-          std::cerr << "Linea " << LINEA_ACTUAL << ": Error: declaracion de clase mal formada." << std::endl; 
-          yyerrok; 
-      }
-#line 1487 "y.tab.c"
-    break;
-
-  case 30: /* clase_item: tipo error ';'  */
-#line 117 "gramatica.y"
+  case 18: /* decl_variables: tipo error ';'  */
+#line 88 "gramatica.y"
       {
-          std::cerr << "Linea " << LINEA_ACTUAL << ": Error: declaracion de atributo o metodo mal formada." << std::endl;
-          yyerrok;
-      }
-#line 1496 "y.tab.c"
-    break;
-
-  case 32: /* extends_clause: PR_EXTENDS error ';'  */
-#line 126 "gramatica.y"
-      {
-          std::cerr << "Linea " << LINEA_ACTUAL 
-                    << ": Error: clausula 'extends' mal formada." 
+          std::cerr << "Linea " << LINEA_ACTUAL
+                    << ": Error: declaracion de variables mal formada."
                     << std::endl;
           yyerrok;
       }
-#line 1507 "y.tab.c"
+#line 1480 "y.tab.c"
+    break;
+
+  case 21: /* decl_funcion: tipo PR_FUNCTION ID '(' lista_params_formales ')' sent_decl_lista PR_BEGIN sent_ejec_lista PR_END ';'  */
+#line 104 "gramatica.y"
+      {
+          std::cout << "Declaracion de funcion (linea "
+                    << LINEA_ACTUAL << ")" << std::endl;
+      }
+#line 1489 "y.tab.c"
+    break;
+
+  case 22: /* decl_funcion: tipo PR_FUNCTION ID error PR_END ';'  */
+#line 109 "gramatica.y"
+      {
+          std::cerr << "Linea " << LINEA_ACTUAL
+                    << ": Error: declaracion de funcion mal formada."
+                    << std::endl;
+          yyerrok;
+      }
+#line 1500 "y.tab.c"
+    break;
+
+  case 23: /* decl_clase: PR_CLASS ID PR_BEGIN clase_item_lista PR_END ';'  */
+#line 119 "gramatica.y"
+      {
+          std::cout << "Declaracion de clase (linea "
+                    << LINEA_ACTUAL << ")" << std::endl;
+      }
+#line 1509 "y.tab.c"
+    break;
+
+  case 24: /* decl_clase: PR_CLASS ID error PR_END ';'  */
+#line 124 "gramatica.y"
+      {
+          std::cerr << "Linea " << LINEA_ACTUAL
+                    << ": Error: declaracion de clase mal formada."
+                    << std::endl;
+          yyerrok;
+      }
+#line 1520 "y.tab.c"
+    break;
+
+  case 30: /* clase_item: tipo error ';'  */
+#line 143 "gramatica.y"
+      {
+          std::cerr << "Linea " << LINEA_ACTUAL
+                    << ": Error: declaracion de atributo o metodo mal formada."
+                    << std::endl;
+          yyerrok;
+      }
+#line 1531 "y.tab.c"
+    break;
+
+  case 31: /* extends_clause: PR_EXTENDS lista_ids ';'  */
+#line 153 "gramatica.y"
+      {
+          std::cout << "Clausula EXTENDS (linea "
+                    << LINEA_ACTUAL << ")" << std::endl;
+      }
+#line 1540 "y.tab.c"
+    break;
+
+  case 32: /* extends_clause: PR_EXTENDS error ';'  */
+#line 158 "gramatica.y"
+      {
+          std::cerr << "Linea " << LINEA_ACTUAL
+                    << ": Error: clausula 'extends' mal formada."
+                    << std::endl;
+          yyerrok;
+      }
+#line 1551 "y.tab.c"
+    break;
+
+  case 33: /* decl_typedef: PR_TYPEDEF ID '=' '[' lista_valores ']' ';'  */
+#line 168 "gramatica.y"
+      {
+          std::cout << "Declaracion de typedef (linea "
+                    << LINEA_ACTUAL << ")" << std::endl;
+      }
+#line 1560 "y.tab.c"
     break;
 
   case 34: /* decl_typedef: PR_TYPEDEF error ';'  */
-#line 137 "gramatica.y"
+#line 173 "gramatica.y"
       {
-          std::cerr << "Linea " << LINEA_ACTUAL << ": Error: declaracion de typedef mal formada." << std::endl;
+          std::cerr << "Linea " << LINEA_ACTUAL
+                    << ": Error: declaracion de typedef mal formada."
+                    << std::endl;
           yyerrok;
       }
-#line 1516 "y.tab.c"
+#line 1571 "y.tab.c"
     break;
 
   case 38: /* sent_ejec_lista: sent_ejec_lista error ';'  */
-#line 152 "gramatica.y"
+#line 191 "gramatica.y"
       {
           std::cerr << "Linea " << LINEA_ACTUAL
                     << ": Error: sentencia ejecutable mal formada. "
@@ -1524,164 +1579,263 @@ yyreduce:
                     << std::endl;
           yyerrok;
       }
-#line 1528 "y.tab.c"
+#line 1583 "y.tab.c"
     break;
 
   case 47: /* asignacion: ID OP_ASIGNACION expresion ';'  */
-#line 172 "gramatica.y"
-             { std::cout << "Asignacion (linea " << LINEA_ACTUAL << ")" << std::endl; }
-#line 1534 "y.tab.c"
+#line 213 "gramatica.y"
+      {
+          std::cout << "Asignacion (linea "
+                    << LINEA_ACTUAL << ")" << std::endl;
+      }
+#line 1592 "y.tab.c"
     break;
 
   case 48: /* asignacion: ID error ';'  */
-#line 174 "gramatica.y"
-             { 
-                 std::cerr << "Linea " << LINEA_ACTUAL 
-                           << ": Error: asignacion mal formada." 
-                           << std::endl; 
-                 yyerrok; 
-             }
-#line 1545 "y.tab.c"
+#line 218 "gramatica.y"
+      {
+          std::cerr << "Linea " << LINEA_ACTUAL
+                    << ": Error: asignacion mal formada."
+                    << std::endl;
+          yyerrok;
+      }
+#line 1603 "y.tab.c"
+    break;
+
+  case 49: /* asignacion_atributo: ID '.' ID '=' expresion ';'  */
+#line 228 "gramatica.y"
+      {
+          std::cout << "Asignacion de atributo (linea "
+                    << LINEA_ACTUAL << ")" << std::endl;
+      }
+#line 1612 "y.tab.c"
+    break;
+
+  case 50: /* asignacion_atributo: ID '[' indice ']' '=' expresion ';'  */
+#line 233 "gramatica.y"
+      {
+          std::cout << "Asignacion posicional de atributo (linea "
+                    << LINEA_ACTUAL << ")" << std::endl;
+      }
+#line 1621 "y.tab.c"
     break;
 
   case 51: /* asignacion_atributo: ID '.' ID error ';'  */
-#line 185 "gramatica.y"
-                       {
-                           std::cerr << "Linea " << LINEA_ACTUAL 
-                                     << ": Error: asignacion de atributo mal formada." 
-                                     << std::endl;
-                           yyerrok;
-                       }
-#line 1556 "y.tab.c"
+#line 238 "gramatica.y"
+      {
+          std::cerr << "Linea " << LINEA_ACTUAL
+                    << ": Error: asignacion de atributo mal formada."
+                    << std::endl;
+          yyerrok;
+      }
+#line 1632 "y.tab.c"
     break;
 
   case 52: /* asignacion_atributo: ID '[' error ';'  */
-#line 192 "gramatica.y"
-                       {
-                           std::cerr << "Linea " << LINEA_ACTUAL 
-                                     << ": Error: asignacion posicional mal formada." 
-                                     << std::endl;
-                           yyerrok;
-                       }
-#line 1567 "y.tab.c"
+#line 245 "gramatica.y"
+      {
+          std::cerr << "Linea " << LINEA_ACTUAL
+                    << ": Error: asignacion posicional mal formada."
+                    << std::endl;
+          yyerrok;
+      }
+#line 1643 "y.tab.c"
+    break;
+
+  case 55: /* retorno: PR_RET '(' expresion ')' ';'  */
+#line 260 "gramatica.y"
+      {
+          std::cout << "Sentencia RET (linea "
+                    << LINEA_ACTUAL << ")" << std::endl;
+      }
+#line 1652 "y.tab.c"
     break;
 
   case 56: /* retorno: PR_RET error ';'  */
-#line 207 "gramatica.y"
-      { 
-          std::cerr << "Linea " << LINEA_ACTUAL << ": Error: sentencia 'ret' mal formada." << std::endl; 
-          yyerrok; 
+#line 265 "gramatica.y"
+      {
+          std::cerr << "Linea " << LINEA_ACTUAL
+                    << ": Error: sentencia 'ret' mal formada."
+                    << std::endl;
+          yyerrok;
       }
-#line 1576 "y.tab.c"
+#line 1663 "y.tab.c"
+    break;
+
+  case 57: /* pout: PR_POUT '(' CTE_STR ')' ';'  */
+#line 275 "gramatica.y"
+      {
+          std::cout << "Sentencia POUT (linea "
+                    << LINEA_ACTUAL << ")" << std::endl;
+      }
+#line 1672 "y.tab.c"
+    break;
+
+  case 58: /* pout: PR_POUT '(' expresion ')' ';'  */
+#line 280 "gramatica.y"
+      {
+          std::cout << "Sentencia POUT (linea "
+                    << LINEA_ACTUAL << ")" << std::endl;
+      }
+#line 1681 "y.tab.c"
     break;
 
   case 59: /* pout: PR_POUT error ';'  */
-#line 217 "gramatica.y"
-      { 
-          std::cerr << "Linea " << LINEA_ACTUAL << ": Error: sentencia 'pout' mal formada." << std::endl; 
-          yyerrok; 
+#line 285 "gramatica.y"
+      {
+          std::cerr << "Linea " << LINEA_ACTUAL
+                    << ": Error: sentencia 'pout' mal formada."
+                    << std::endl;
+          yyerrok;
       }
-#line 1585 "y.tab.c"
+#line 1692 "y.tab.c"
+    break;
+
+  case 69: /* seleccion: PR_IF '(' condicion ')' bloque_sent_ejec PR_END_IF ';'  */
+#line 313 "gramatica.y"
+      {
+          std::cout << "Sentencia IF (linea "
+                    << LINEA_ACTUAL << ")" << std::endl;
+      }
+#line 1701 "y.tab.c"
+    break;
+
+  case 70: /* seleccion: PR_IF '(' condicion ')' bloque_sent_ejec PR_ELSE bloque_sent_ejec PR_END_IF ';'  */
+#line 319 "gramatica.y"
+      {
+          std::cout << "Sentencia IF-ELSE (linea "
+                    << LINEA_ACTUAL << ")" << std::endl;
+      }
+#line 1710 "y.tab.c"
     break;
 
   case 71: /* seleccion: PR_IF error PR_END_IF ';'  */
-#line 242 "gramatica.y"
+#line 324 "gramatica.y"
       {
           std::cerr << "Linea " << LINEA_ACTUAL
                     << ": Error: sentencia 'if' mal formada o incompleta."
                     << std::endl;
           yyerrok;
       }
-#line 1596 "y.tab.c"
+#line 1721 "y.tab.c"
+    break;
+
+  case 72: /* repeat_while: PR_REPEAT bloque_sent_ejec PR_WHILE '(' condicion ')' ';'  */
+#line 334 "gramatica.y"
+      {
+          std::cout << "Sentencia REPEAT-WHILE (linea "
+                    << LINEA_ACTUAL << ")" << std::endl;
+      }
+#line 1730 "y.tab.c"
     break;
 
   case 73: /* repeat_while: PR_REPEAT error ';'  */
-#line 253 "gramatica.y"
-      { 
-          std::cerr << "Linea " << LINEA_ACTUAL << ": Error: sentencia 'repeat-while' mal formada." << std::endl; 
-          yyerrok; 
+#line 339 "gramatica.y"
+      {
+          std::cerr << "Linea " << LINEA_ACTUAL
+                    << ": Error: sentencia 'repeat-while' mal formada."
+                    << std::endl;
+          yyerrok;
       }
-#line 1605 "y.tab.c"
+#line 1741 "y.tab.c"
     break;
 
   case 82: /* factor: '-' CTE_INT  */
-#line 274 "gramatica.y"
-         {
-             std::cerr << "Linea " << LINEA_ACTUAL << ": Error semantico: la constante '"
-                       << (yyvsp[0].ts_ref)->lexema << "' es de tipo USHORTINT (sin signo), "
-                       << "no admite el signo '-'." << std::endl;
-             (yyval.ts_ref) = (yyvsp[0].ts_ref); //Se guarda la cte como positiva, para futuras operaciones. Guarda un 12 por ej en vez de -12 invalido.
-         }
-#line 1616 "y.tab.c"
+#line 365 "gramatica.y"
+      {
+          std::cerr << "Linea " << LINEA_ACTUAL
+                    << ": Error semantico: la constante '"
+                    << (yyvsp[0].ts_ref)->lexema
+                    << "' es de tipo USHORTINT (sin signo), "
+                    << "no admite el signo '-'."
+                    << std::endl;
+
+          (yyval.ts_ref) = (yyvsp[0].ts_ref);
+      }
+#line 1756 "y.tab.c"
     break;
 
   case 83: /* factor: '-' CTE_FLOAT  */
-#line 281 "gramatica.y"
-         {
-             std::string lexema_neg = "-" + (yyvsp[0].ts_ref)->lexema;
+#line 376 "gramatica.y"
+      {
+          std::string lexema_neg = "-" + (yyvsp[0].ts_ref)->lexema;
 
-             auto it = tabla_simbolos.find(lexema_neg);
-             if (it == tabla_simbolos.end()) {
-                 EntradaTS nueva_entrada;
-                 nueva_entrada.lexema = lexema_neg;
-                 it = tabla_simbolos.insert({lexema_neg, nueva_entrada}).first;
-             }
-             (yyval.ts_ref) = &(it->second);
-         }
-#line 1632 "y.tab.c"
+          auto it = tabla_simbolos.find(lexema_neg);
+
+          if (it == tabla_simbolos.end()) {
+              EntradaTS nueva_entrada;
+              nueva_entrada.lexema = lexema_neg;
+
+              it = tabla_simbolos.insert(
+                  {lexema_neg, nueva_entrada}
+              ).first;
+          }
+
+          (yyval.ts_ref) = &(it->second);
+      }
+#line 1777 "y.tab.c"
     break;
 
   case 95: /* factor_restr: '-' CTE_INT  */
-#line 310 "gramatica.y"
-               {
-                   std::cerr << "Linea " << LINEA_ACTUAL << ": Error semantico: la constante '"
-                             << (yyvsp[0].ts_ref)->lexema << "' es de tipo USHORTINT (sin signo), "
-                             << "no admite el signo '-'." << std::endl;
-                   (yyval.ts_ref) = (yyvsp[0].ts_ref);
-               }
-#line 1643 "y.tab.c"
+#line 413 "gramatica.y"
+      {
+          std::cerr << "Linea " << LINEA_ACTUAL
+                    << ": Error semantico: la constante '"
+                    << (yyvsp[0].ts_ref)->lexema
+                    << "' es de tipo USHORTINT (sin signo), "
+                    << "no admite el signo '-'."
+                    << std::endl;
+
+          (yyval.ts_ref) = (yyvsp[0].ts_ref);
+      }
+#line 1792 "y.tab.c"
     break;
 
   case 96: /* factor_restr: '-' CTE_FLOAT  */
-#line 317 "gramatica.y"
-               {
-                   std::string lexema_neg = "-" + (yyvsp[0].ts_ref)->lexema;
+#line 424 "gramatica.y"
+      {
+          std::string lexema_neg = "-" + (yyvsp[0].ts_ref)->lexema;
 
-                   auto it = tabla_simbolos.find(lexema_neg);
-                   if (it == tabla_simbolos.end()) {
-                       EntradaTS nueva_entrada;
-                       nueva_entrada.lexema = lexema_neg;
-                       it = tabla_simbolos.insert({lexema_neg, nueva_entrada}).first;
-                   }
-                   (yyval.ts_ref) = &(it->second);
-               }
-#line 1659 "y.tab.c"
+          auto it = tabla_simbolos.find(lexema_neg);
+
+          if (it == tabla_simbolos.end()) {
+              EntradaTS nueva_entrada;
+              nueva_entrada.lexema = lexema_neg;
+
+              it = tabla_simbolos.insert(
+                  {lexema_neg, nueva_entrada}
+              ).first;
+          }
+
+          (yyval.ts_ref) = &(it->second);
+      }
+#line 1813 "y.tab.c"
     break;
 
   case 102: /* invocacion: ID '(' error ')' lista_ctes_opcional  */
-#line 338 "gramatica.y"
-             {
-                 std::cerr << "Linea " << LINEA_ACTUAL 
-                           << ": Error: invocacion a funcion mal formada." 
-                           << std::endl;
-                 yyerrok;
-             }
-#line 1670 "y.tab.c"
+#line 452 "gramatica.y"
+      {
+          std::cerr << "Linea " << LINEA_ACTUAL
+                    << ": Error: invocacion a funcion mal formada."
+                    << std::endl;
+          yyerrok;
+      }
+#line 1824 "y.tab.c"
     break;
 
   case 106: /* lista_ctes_opcional: '[' error ']'  */
-#line 352 "gramatica.y"
-                       {
-                           std::cerr << "Linea " << LINEA_ACTUAL
-                                     << ": Error: lista de orden de evaluacion mal formada."
-                                     << std::endl;
-                           yyerrok;
-                       }
-#line 1681 "y.tab.c"
+#line 468 "gramatica.y"
+      {
+          std::cerr << "Linea " << LINEA_ACTUAL
+                    << ": Error: lista de orden de evaluacion mal formada."
+                    << std::endl;
+          yyerrok;
+      }
+#line 1835 "y.tab.c"
     break;
 
 
-#line 1685 "y.tab.c"
+#line 1839 "y.tab.c"
 
       default: break;
     }
@@ -1874,7 +2028,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 373 "gramatica.y"
+#line 492 "gramatica.y"
 
 
 void yyerror(const char *s) {

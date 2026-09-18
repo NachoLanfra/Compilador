@@ -14,18 +14,27 @@ end;
 class empleado
 begin
     ushortint sueldo;
+    extends persona;
 end;
 
-extends persona, empleado;
+persona p;
+empleado e;
 
 doublef function calcular(ushortint p, doublef q)
-begin
-    ushortint r;
+    ushortint r; 
 begin
     r := p;
     ret(r);
     ret(q);
 end;
+
+{{ -------- ERRORES DE DECLARACION -------- }}
+
+ushortint;
+doublef ;
+ushortint a b;
+doublef x,;
+
 
 begin
 
@@ -47,9 +56,6 @@ begin
 
     a := b = (c + d);
     x := y = (2.5) + z;
-
-    persona p;
-    empleado e;
 
     p.edad = 20$us;
     p[0$us] = 25$us;
@@ -74,38 +80,31 @@ begin
 
     ret(a);
 
-    // -------- ERRORES DE DECLARACION --------
-
-    ushortint;
-    doublef ;
-    ushortint a b;
-    doublef x,;
-
-    // -------- ERRORES DE ASIGNACION --------
+    {{ -------- ERRORES DE ASIGNACION -------- }}
 
     a := ;
     a b := 10$us;
     a := 10$us
 
-    // -------- ERRORES DE ATRIBUTOS --------
+    {{ -------- ERRORES DE ATRIBUTOS -------- }}
 
     p.edad = ;
     p[ = 10$us;
     p[] = 10$us;
 
-    // -------- ERRORES DE POUT --------
+    {{ -------- ERRORES DE POUT -------- }}
 
     pout();
     pout(;
     pout(a + );
 
-    // -------- ERRORES DE RET --------
+    {{ -------- ERRORES DE RET -------- }}
 
     ret();
     ret(;
     ret(a + );
 
-    // -------- ERRORES DE IF --------
+    {{ -------- ERRORES DE IF -------- }}
 
     if (a > b
         a := b;
@@ -121,8 +120,8 @@ begin
 
     if (a > b)
         a := b;
-
-    // -------- ERRORES DE REPEAT-WHILE --------
+	end_if;
+    {{ -------- ERRORES DE REPEAT-WHILE -------- }}
 
     repeat
         a := a + 1$us;
@@ -132,32 +131,32 @@ begin
         a := a + 1$us;
     (a < 100$us);
 
-    // -------- ERRORES DE INVOCACION --------
+    {{ -------- ERRORES DE INVOCACION -------- }}
 
     calcular(a,);
     calcular(;
     calcular(a x);
 
-    // -------- ERRORES DE LISTA DE CONSTANTES --------
+    {{ -------- ERRORES DE LISTA DE CONSTANTES -------- }}
 
     calcular(a, x)[];
     calcular(a, x)[1$us,];
     calcular(a, x)[,1$us];
 
-    // -------- ERRORES DE EXPRESIONES --------
+    {{ -------- ERRORES DE EXPRESIONES -------- }}
 
     a := b + ;
     a := * b;
     a := b / ;
     a := (b + c);
 
-    // -------- CONSTANTES NEGATIVAS --------
+    {{ -------- CONSTANTES NEGATIVAS -------- }}
 
     z := -10.5;
     z := -0.5;
     a := -10$us;
 
-    // -------- RECUPERACION --------
+    {{ -------- RECUPERACION -------- }}
 
     a := ;
     a := 30$us;
