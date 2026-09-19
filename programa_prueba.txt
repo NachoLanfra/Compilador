@@ -1,9 +1,0 @@
-programa_prueba
-
-begin
-
-a := 10$us;
-a := ;
-a := 20$us;
-
-end
