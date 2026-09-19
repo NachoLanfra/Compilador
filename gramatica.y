@@ -36,13 +36,6 @@ prog
                     << std::endl;
           yyerrok;
       }
-    | ID sent_decl_lista PR_BEGIN sent_ejec_lista error
-      {
-          std::cerr << "Linea " << LINEA_ACTUAL
-                    << ": Error: falta 'end' final del programa."
-                    << std::endl;
-          yyerrok;
-      }
     ;
 
 /* ---------- sentencias declarativas ---------- */
@@ -320,10 +313,20 @@ seleccion
           std::cout << "Sentencia IF-ELSE (linea "
                     << LINEA_ACTUAL << ")" << std::endl;
       }
-    | PR_IF error PR_END_IF ';'
+    | PR_IF error ';'
       {
+          // Sincronizamos en el ';' mas cercano, igual que el resto de
+          // las reglas de error de esta gramatica (asignacion,
+          // sent_decl_lista, repeat_while, etc.). Antes esta regla exigia
+          // encontrar literalmente un PR_END_IF para poder recuperarse:
+          // si el 'end_if' faltaba en todo el archivo, el parser quedaba
+          // sin forma de resincronizar y terminaba en un error fatal
+          // (que ademas no se imprimia, por el bug de yyerror() vacio).
+          // Con ';' como sincronismo, cualquier 'if' mal formado -con o
+          // sin 'end_if'- se recupera igual.
           std::cerr << "Linea " << LINEA_ACTUAL
-                    << ": Error: sentencia 'if' mal formada o incompleta."
+                    << ": Error: sentencia 'if' mal formada, incompleta, "
+                    << "o le falta 'end_if'."
                     << std::endl;
           yyerrok;
       }
@@ -492,5 +495,11 @@ llamada_opcional
 %%
 
 void yyerror(const char *s) {
-    (void)s;
+    // Red de seguridad: cualquier error de sintaxis que NO haya sido
+    // capturado por una produccion 'error' especifica (mensaje propio +
+    // yyerrok) termina aca. Antes esta funcion no hacia nada, asi que un
+    // error sin regla de recuperacion (ej. un 'end_if' faltante en todo
+    // el archivo) quedaba completamente mudo: no se imprimia linea ni
+    // descripcion, solo se contaba silenciosamente.
+    std::cerr << "Linea " << LINEA_ACTUAL << ": Error: " << s << std::endl;
 }
