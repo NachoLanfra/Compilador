@@ -65,11 +65,12 @@ b := 5.0d-400;
    debe ser un error lexico. }}
 b := 5.;
 
-{{ ---------- 11) CASO CONOCIDO: FLOTANTE SIN PARTE ENTERA ----------
+{{ ---------- 11) FLOTANTE SIN PARTE ENTERA (tema 8) ----------
    El tema 8 permite "puede estar ausente la parte entera" (ej: .6 es
-   valido segun el enunciado). Este test documenta el comportamiento
-   ACTUAL del compilador con este caso limite. }}
+   valido segun el enunciado). Debe reconocerse como CTE_FLOAT valida,
+   sin ningun error. }}
 b := .6;
+b := -.6;
 
 {{ ---------- 12) COMENTARIO MULTILINEA (tema 16) que ocupa
    varias

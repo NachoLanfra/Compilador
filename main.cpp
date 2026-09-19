@@ -10,7 +10,7 @@
 #include "y.tab.h"   // ID, CTE_INT, PR_IF, etc. -- generado por bison a partir de gramatica.y
 
 // Constantes para las matrices del autómata
-const int CANT_ESTADOS = 20;  
+const int CANT_ESTADOS = 21;  
 const int CANT_COLUMNAS = 22;  
 
 // Constantes para los estados que no son un número normal
@@ -105,7 +105,7 @@ enum ColumnaMatriz {
 
 // Matriz de Transiciones de Estado
 std::array<std::array<int, CANT_COLUMNAS>, CANT_ESTADOS> matriz_estados = {{
-    {            9,            1,            2,            0, ESTADO_ERROR, ESTADO_FINAL,           18,           10, ESTADO_FINAL, ESTADO_FINAL,           11,           12,           13,            0,           14, ESTADO_ERROR, ESTADO_ERROR,            1,            1,            1,           16, ESTADO_ERROR },  // Estado 0
+    {            9,            1,            2,            0, ESTADO_ERROR,           20,           18,           10, ESTADO_FINAL, ESTADO_FINAL,           11,           12,           13,            0,           14, ESTADO_ERROR, ESTADO_ERROR,            1,            1,            1,           16, ESTADO_ERROR },  // Estado 0
     {            9,            1,            1, ESTADO_FINAL,            1, ESTADO_FINAL, ESTADO_FINAL, ESTADO_FINAL, ESTADO_FINAL, ESTADO_FINAL, ESTADO_FINAL, ESTADO_FINAL, ESTADO_FINAL, ESTADO_FINAL, ESTADO_FINAL, ESTADO_FINAL, ESTADO_FINAL,            1,            1,            1, ESTADO_FINAL, ESTADO_ERROR },  // Estado 1
     { ESTADO_ERROR, ESTADO_ERROR,            2, ESTADO_ERROR, ESTADO_ERROR,            5, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR,            3, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR },  // Estado 2
     { ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR,            4, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR },  // Estado 3
@@ -125,12 +125,13 @@ std::array<std::array<int, CANT_COLUMNAS>, CANT_ESTADOS> matriz_estados = {{
     {           15,           15,           15,           15,           15,           15,           15,           15,           15,           15,           15,           15,           15,           15,           15,            0,           15,           15,           15,           15,           15, 15 },  // Estado 17
     { ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_FINAL, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR, ESTADO_ERROR },  // Estado 18
     { ESTADO_FINAL, ESTADO_FINAL,           19, ESTADO_FINAL, ESTADO_FINAL, ESTADO_FINAL, ESTADO_FINAL, ESTADO_FINAL, ESTADO_FINAL, ESTADO_FINAL, ESTADO_FINAL, ESTADO_FINAL, ESTADO_FINAL, ESTADO_FINAL, ESTADO_FINAL, ESTADO_FINAL, ESTADO_FINAL, ESTADO_FINAL, ESTADO_FINAL,            6, ESTADO_FINAL, ESTADO_ERROR },  // Estado 19
+    { ESTADO_FINAL, ESTADO_FINAL,           19, ESTADO_FINAL, ESTADO_FINAL, ESTADO_FINAL, ESTADO_FINAL, ESTADO_FINAL, ESTADO_FINAL, ESTADO_FINAL, ESTADO_FINAL, ESTADO_FINAL, ESTADO_FINAL, ESTADO_FINAL, ESTADO_FINAL, ESTADO_FINAL, ESTADO_FINAL, ESTADO_FINAL, ESTADO_FINAL, ESTADO_FINAL, ESTADO_FINAL, ESTADO_ERROR },  // Estado 20 ('.' tentativo: digito -> entra a 19 (parte decimal); cualquier otra cosa -> retract y devuelve '.' solo
 }};
 
 
 // Matriz de Acciones Semanticas
 std::array<std::array<AccionSemantica, CANT_COLUMNAS>, CANT_ESTADOS> matriz_acciones = {{
-    {     A_ADD,     A_ADD,     A_ADD,    A_NONE,   A_ERROR,     A_ATK,     A_ADD,     A_ADD,     A_ATK,     A_ATK,     A_ADD,     A_ADD,     A_ADD,      A_NL,    A_NONE,   A_ERROR,   A_ERROR,     A_ADD,     A_ADD,     A_ADD,    A_NONE,   A_ERROR },  // Estado 0
+    {     A_ADD,     A_ADD,     A_ADD,    A_NONE,   A_ERROR,     A_ADD,     A_ADD,     A_ADD,     A_ATK,     A_ATK,     A_ADD,     A_ADD,     A_ADD,      A_NL,    A_NONE,   A_ERROR,   A_ERROR,     A_ADD,     A_ADD,     A_ADD,    A_NONE,   A_ERROR },  // Estado 0
     {     A_ADD,     A_ADD,     A_ADD,      A_ID,     A_ADD,      A_ID,      A_ID,      A_ID,      A_ID,      A_ID,      A_ID,      A_ID,      A_ID,      A_ID,      A_ID,      A_ID,      A_ID,      A_ADD,      A_ADD,      A_ADD,      A_ID,   A_ERROR },  // Estado 1
     {   A_ERROR,   A_ERROR,     A_ADD,   A_ERROR,   A_ERROR,     A_ADD,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,     A_ADD,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR },  // Estado 2
     {   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,     A_ADD,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR },  // Estado 3
@@ -150,6 +151,7 @@ std::array<std::array<AccionSemantica, CANT_COLUMNAS>, CANT_ESTADOS> matriz_acci
     {    A_NONE,    A_NONE,    A_NONE,    A_NONE,    A_NONE,    A_NONE,    A_NONE,    A_NONE,    A_NONE,    A_NONE,    A_NONE,    A_NONE,    A_NONE,      A_NL,    A_NONE,    A_COM,    A_NONE,    A_NONE,    A_NONE,    A_NONE,    A_NONE,   A_NONE },  // Estado 17
     {   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,     A_ATK,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR,   A_ERROR },  // Estado 18
     {     A_FLT,     A_FLT,     A_ADD,     A_FLT,     A_FLT,     A_FLT,     A_FLT,     A_FLT,     A_FLT,     A_FLT,     A_FLT,     A_FLT,     A_FLT,     A_FLT,     A_FLT,     A_FLT,     A_FLT,     A_FLT,     A_FLT,     A_ADD,     A_FLT,   A_ERROR },  // Estado 19
+    {     A_RTK,     A_RTK,     A_ADD,     A_RTK,     A_RTK,     A_RTK,     A_RTK,     A_RTK,     A_RTK,     A_RTK,     A_RTK,     A_RTK,     A_RTK,     A_RTK,     A_RTK,     A_RTK,     A_RTK,     A_RTK,     A_RTK,     A_RTK,     A_RTK,   A_ERROR },  // Estado 20
 }};
 
 
