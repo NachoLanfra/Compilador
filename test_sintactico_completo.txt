@@ -1,0 +1,131 @@
+test_sintactico
+
+{{ =========================================================
+   TEST SINTACTICO COMPLETO - camino feliz
+   Grupo temas 2,8,9,13,16,17,20,23,25,29,30,35.
+   Todo lo que hay aca DEBE ser valido: el compilador tiene que
+   terminar con "Programa aceptado sintacticamente" y CERO
+   errores/warnings.
+   ========================================================= }}
+
+{{ ---------- Variables de los tipos del grupo (tema 2 y 8) ---------- }}
+ushortint a, b, c;
+doublef x, y, z;
+
+{{ ---------- Typedef / enumeraciones (tema 23) ---------- }}
+typedef pares = [2$us, 4$us, 6$us, 8$us];
+pares p1, p2;
+
+{{ ---------- Clases sin codigo extra (tema 25) y con herencia
+   multiple via extends (tema 30, la desambiguacion se define en
+   etapa 3, aca solo se prueba la sintaxis de declaracion) ---------- }}
+class base1
+begin
+    ushortint valor;
+end;
+
+class base2
+begin
+    doublef factor;
+end;
+
+class figura
+begin
+    ushortint lado;
+    doublef area;
+    extends base1, base2;
+end;
+
+figura f1, f2;
+
+{{ ---------- Funcion con parametros, variables locales,
+   multiples retornos y funcion anidada ---------- }}
+doublef function calcular(ushortint n, doublef q)
+    doublef acumulado;
+    ushortint function doble(ushortint m)
+    begin
+        ret(m * 2$us);
+    end;
+begin
+    acumulado := q + 1.5;
+    if (n > 0$us)
+        ret(acumulado);
+    else
+        ret(q);
+    end_if;
+end;
+
+begin
+
+    {{ ---------- Asignaciones simples ---------- }}
+    a := 10$us;
+    b := 20$us;
+    c := a + b * 2$us;
+    x := 10.5;
+    y := x + 2.5;
+
+    {{ ---------- Constantes negativas (doublef, tema 8) ---------- }}
+    z := -10.5;
+    z := -0.5;
+    z := x + -2.5;
+
+    {{ ---------- Cadenas y pout (tema 9) ---------- }}
+    pout('Hola mundo');
+    pout(a + b * 2$us);
+
+    {{ ---------- Invocaciones a funcion, con y sin uso del retorno ---------- }}
+    calcular(a, x);
+    z := calcular(a, x);
+
+    {{ ---------- Orden de evaluacion de parametros, opcional (tema 20) ---------- }}
+    z := calcular(a, x)[1$us, 2$us];
+    z := calcular(a, x);
+
+    {{ ---------- Asignaciones de expresiones en expresiones,
+       con parentesis (tema 17) ---------- }}
+    a := b = (2$us);
+    x := y = (3.5);
+    a := b = (c + a) * b;
+
+    {{ ---------- Acceso tradicional a atributos de objetos ---------- }}
+    f1.lado = 5$us;
+    f1.area = 12.5;
+
+    {{ ---------- Acceso posicional a atributos (tema 29) ---------- }}
+    f1[0$us] = 6$us;
+    f1[1$us] = 15.0;
+    f1[a] = 7$us;
+
+    {{ ---------- Seleccion if / if-else ---------- }}
+    if (a > b)
+        a := b;
+    end_if;
+
+    if (a > b)
+        a := b;
+    else
+        b := a;
+    end_if;
+
+    if (a > b)
+    begin
+        a := b;
+        b := a;
+    end;
+    end_if;
+
+    {{ ---------- Repeat-while (tema 13) ---------- }}
+    repeat
+        a := a + 1$us;
+    while (a < 100$us);
+
+    repeat
+    begin
+        a := a + 1$us;
+        b := b + 1$us;
+    end;
+    while (a < 50$us);
+
+    pout('La compilacion continua sin errores');
+
+end;

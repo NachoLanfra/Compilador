@@ -420,6 +420,22 @@ int yylex() {
         }
     }
 
+    // Comentario multilinea sin cerrar al llegar al fin de archivo.
+    // Se chequea ANTES y por fuera del "if (!lexema_actual.empty())" de
+    // abajo porque el estado de comentario nunca acumula texto en
+    // lexema_actual (los caracteres del cuerpo del comentario usan la
+    // accion A_NONE, no A_ADD, ya que ese contenido se descarta de todos
+    // modos). Antes, este chequeo vivia adentro del "default" de mas abajo,
+    // protegido por "!lexema_actual.empty()", asi que con un comentario
+    // sin cerrar esa condicion daba SIEMPRE falso y el mensaje nunca se
+    // imprimia (quedaba como codigo muerto).
+    if (estado_actual == 14 || estado_actual == 15 || estado_actual == 17) {
+        std::cerr << "Error Léxico en línea " << LINEA_ACTUAL
+        << ": comentario sin cerrar al final del archivo."
+        << std::endl;
+        return 0;
+    }
+
     if (!lexema_actual.empty()) { // Si al llegar al fin de archivo, el lexema no está vacío, significa que hay un lexema incompleto que debe ser procesado.
         AccionSemantica accion_eof = matriz_acciones[estado_actual][COL_BLANCO_TAB]; // Usamos la columna de espacio/tab para determinar la acción semántica al final del archivo
         switch (accion_eof) {
@@ -465,17 +481,11 @@ int yylex() {
                 yylval.ts_ref = a_ts(lexema_actual);
                 return CTE_INT;    
                     
-            default: // Si es un lexema incompleto, imprimimos un mensaje de error y descartamos el lexema, ejemplo: cadena sin cerrar, comentario sin cerrar, etc.
+            default: // Si es un lexema incompleto, imprimimos un mensaje de error y descartamos el lexema, ejemplo: cadena sin cerrar, etc.
                 if (estado_actual == 16) {
                     std::cerr << "Error Léxico en línea " << LINEA_ACTUAL
                     << ": cadena sin cerrar al final del archivo: '"
                     << lexema_actual << "'" << std::endl;
-                } else if (estado_actual == 14 ||
-                    estado_actual == 15 ||
-                    estado_actual == 17) {
-                    std::cerr << "Error Léxico en línea " << LINEA_ACTUAL
-                    << ": comentario sin cerrar al final del archivo."
-                    << std::endl;
                 } else {
                     std::cerr << "Error Léxico en línea " << LINEA_ACTUAL
                     << ": fin de archivo inesperado, lexema incompleto descartado: '"

@@ -1,0 +1,126 @@
+test_lexico
+
+{{ =========================================================
+   TEST LEXICO COMPLETO - Grupo temas 2,8,9,13,16,17,20,23,25,29,30,35
+   Cada seccion prueba un aspecto puntual del Analizador Lexico.
+   Los comentarios usan la sintaxis del propio lenguaje (tema 16).
+   ========================================================= }}
+
+{{ ---------- 1) IDENTIFICADORES VALIDOS ---------- }}
+ushortint a;
+ushortint var_x;
+ushortint _no_deberia_empezar_con_guion;
+ushortint nombre_con_numeros123;
+
+{{ ---------- 2) IDENTIFICADOR EN EL LIMITE DE 22 CARACTERES ----------
+   idabcdefghijklmnopqrst tiene EXACTAMENTE 22 caracteres: no debe
+   truncarse ni generar warning. }}
+ushortint idabcdefghijklmnopqrst;
+
+{{ ---------- 3) IDENTIFICADOR QUE SUPERA LOS 22 CARACTERES ----------
+   idabcdefghijklmnopqrstu tiene 23 caracteres: debe truncarse a
+   idabcdefghijklmnopqrst (22) e informarse como Warning. }}
+ushortint idabcdefghijklmnopqrstu;
+
+{{ ---------- 4) PALABRAS RESERVADAS EN MAYUSCULAS/MINUSCULAS/MIXTO ----------
+   Deben reconocerse igual sin importar el casing. }}
+DOUBLEF b;
+DoubleF c;
+UshortInt d;
+
+begin
+
+{{ ---------- 5) IDENTIFICADOR CON MAYUSCULA EN EL MEDIO (invalido) ----------
+   Las letras de un identificador SOLO pueden ser minusculas. }}
+a := 1$us;
+variableConMayuscula := 2$us;
+
+{{ ---------- 6) CONSTANTES USHORTINT (tema 2): rango 0-255 ---------- }}
+a := 0$us;
+a := 255$us;
+a := 256$us;
+a := 999$us;
+
+{{ ---------- 7) CONSTANTES USHORTINT MAL FORMADAS ---------- }}
+a := 5$u;
+a := 5$s;
+a := 5$usx;
+
+{{ ---------- 8) CONSTANTES DOUBLEF (tema 8) validas ---------- }}
+b := 1.0;
+b := 0.0;
+b := 15.2;
+b := 1.2d10;
+b := 1.2d+10;
+b := 1.2d-10;
+b := 2.2250738585072014d-308;
+b := 1.7976931348623157d+308;
+
+{{ ---------- 9) CONSTANTES DOUBLEF FUERA DE RANGO ---------- }}
+b := 1.8d+309;
+b := 5.0d-400;
+
+{{ ---------- 10) CONSTANTES DOUBLEF MAL FORMADAS ----------
+   La parte decimal es obligatoria: "5." sin digitos despues del punto
+   debe ser un error lexico. }}
+b := 5.;
+
+{{ ---------- 11) CASO CONOCIDO: FLOTANTE SIN PARTE ENTERA ----------
+   El tema 8 permite "puede estar ausente la parte entera" (ej: .6 es
+   valido segun el enunciado). Este test documenta el comportamiento
+   ACTUAL del compilador con este caso limite. }}
+b := .6;
+
+{{ ---------- 12) COMENTARIO MULTILINEA (tema 16) que ocupa
+   varias
+   lineas,
+   para verificar que el contador de lineas sigue bien despues. }}
+c := 1.5;
+
+{{ ---------- 13) LLAVE SUELTA DENTRO DE UN COMENTARIO: no cierra nada ---------- }}
+{{ esto tiene una } llave suelta adentro y sigue siendo comentario }}
+c := 2.5;
+
+{{ ---------- 14) CADENAS: delimitador realmente implementado (comilla simple) ---------- }}
+pout('Hola mundo');
+pout('cadena con espacios y simbolos: 123 !');
+
+{{ ---------- 15) CADENA QUE NO CIERRA ANTES DEL SALTO DE LINEA ----------
+   El tema 9 exige que la cadena no ocupe mas de una linea: si el salto
+   de linea llega antes de la comilla de cierre, debe ser error lexico. }}
+pout('cadena que nunca cierra en esta linea
+c := 3.5;
+
+{{ ---------- 16) IDENTIFICADORES "camuflados" con palabras reservadas ----------
+   Deben tokenizarse como ID, no como palabra reservada. }}
+ushortint ifx;
+ushortint endif;
+ushortint end_ifx;
+
+{{ ---------- 17) OPERADORES Y SIMBOLOS ---------- }}
+a := a + 1$us;
+a := a - 1$us;
+a := a * 2$us;
+a := a / 2$us;
+if (a == 1$us)
+a := 2$us;
+end_if;
+if (a != 1$us)
+a := 2$us;
+end_if;
+if (a <= 1$us)
+a := 2$us;
+end_if;
+if (a >= 1$us)
+a := 2$us;
+end_if;
+
+{{ ---------- 18) SIMBOLOS SUELTOS INVALIDOS (: y ! sin completar) ---------- }}
+a := a :;
+a := a !;
+
+{{ ---------- 19) CARACTERES DESCONOCIDOS PARA EL LENGUAJE ---------- }}
+a := a @ 1$us;
+a := a # 1$us;
+
+end;
