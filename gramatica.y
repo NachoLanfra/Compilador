@@ -370,8 +370,6 @@ factor
         {
             std::string lexema_neg = "-" + $2->lexema;
       
-            tabla_simbolos.erase($2->lexema);
-      
             auto it = tabla_simbolos.find(lexema_neg);
       
             if (it == tabla_simbolos.end()) {

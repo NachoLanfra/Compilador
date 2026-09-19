@@ -682,10 +682,10 @@ static const yytype_int16 yyrline[] =
      230,   237,   247,   248,   252,   257,   267,   272,   277,   287,
      288,   292,   296,   297,   298,   299,   300,   301,   305,   310,
      316,   327,   332,   344,   345,   346,   350,   351,   352,   356,
-     357,   358,   369,   388,   389,   390,   394,   395,   396,   400,
-     401,   402,   406,   407,   408,   419,   436,   437,   441,   442,
-     446,   447,   457,   458,   462,   463,   470,   474,   475,   479,
-     480,   484,   485
+     357,   358,   369,   386,   387,   388,   392,   393,   394,   398,
+     399,   400,   404,   405,   406,   417,   434,   435,   439,   440,
+     444,   445,   455,   456,   460,   461,   468,   472,   473,   477,
+     478,   482,   483
 };
 #endif
 
@@ -1750,8 +1750,6 @@ yyreduce:
         {
             std::string lexema_neg = "-" + (yyvsp[0].ts_ref)->lexema;
       
-            tabla_simbolos.erase((yyvsp[0].ts_ref)->lexema);
-      
             auto it = tabla_simbolos.find(lexema_neg);
       
             if (it == tabla_simbolos.end()) {
@@ -1765,11 +1763,11 @@ yyreduce:
       
             (yyval.ts_ref) = &(it->second);
         }
-#line 1769 "y.tab.c"
+#line 1767 "y.tab.c"
     break;
 
   case 94: /* factor_restr: '-' CTE_INT  */
-#line 409 "gramatica.y"
+#line 407 "gramatica.y"
       {
           std::cerr << "Linea " << LINEA_ACTUAL
                     << ": Error semantico: la constante '"
@@ -1780,11 +1778,11 @@ yyreduce:
 
           (yyval.ts_ref) = (yyvsp[0].ts_ref);
       }
-#line 1784 "y.tab.c"
+#line 1782 "y.tab.c"
     break;
 
   case 95: /* factor_restr: '-' CTE_FLOAT  */
-#line 420 "gramatica.y"
+#line 418 "gramatica.y"
       {
           std::string lexema_neg = "-" + (yyvsp[0].ts_ref)->lexema;
 
@@ -1801,33 +1799,33 @@ yyreduce:
 
           (yyval.ts_ref) = &(it->second);
       }
-#line 1805 "y.tab.c"
+#line 1803 "y.tab.c"
     break;
 
   case 101: /* invocacion: ID '(' error ')' lista_ctes_opcional  */
-#line 448 "gramatica.y"
+#line 446 "gramatica.y"
       {
           std::cerr << "Linea " << LINEA_ACTUAL
                     << ": Error: invocacion a funcion mal formada."
                     << std::endl;
           yyerrok;
       }
-#line 1816 "y.tab.c"
+#line 1814 "y.tab.c"
     break;
 
   case 105: /* lista_ctes_opcional: '[' error ']'  */
-#line 464 "gramatica.y"
+#line 462 "gramatica.y"
       {
           std::cerr << "Linea " << LINEA_ACTUAL
                     << ": Error: lista de orden de evaluacion mal formada."
                     << std::endl;
           yyerrok;
       }
-#line 1827 "y.tab.c"
+#line 1825 "y.tab.c"
     break;
 
 
-#line 1831 "y.tab.c"
+#line 1829 "y.tab.c"
 
       default: break;
     }
@@ -2020,7 +2018,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 488 "gramatica.y"
+#line 486 "gramatica.y"
 
 
 void yyerror(const char *s) {
