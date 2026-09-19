@@ -7,7 +7,7 @@
 #include <string> // Manejo de strings
 
 #include "main.h"    // EntradaTS, tabla_simbolos, LINEA_ACTUAL, archivo (declaraciones compartidas)
-#include "y.tab.h"   // ID, CTE_INT, PR_IF, etc. -- generado por bison a partir de gramatica.y
+#include "y.tab.h"   // ID, CTE_INT, PR_IF, etc. 
 
 // Constantes para las matrices del autómata
 const int CANT_ESTADOS = 21;  
@@ -41,8 +41,7 @@ const std::unordered_map<std::string, int> tabla_referencias = {
 };
 
 // Tabla de Símbolos
-// (EntradaTS ahora está definido en main.h, porque el %union del parser
-//  también lo necesita)
+// (EntradaTS ahora está definido en main.h, porque el %union del parser también lo necesita
 std::unordered_map<std::string, EntradaTS> tabla_simbolos;
 
 // Tabla de operadores
@@ -422,15 +421,6 @@ int yylex() {
         }
     }
 
-    // Comentario multilinea sin cerrar al llegar al fin de archivo.
-    // Se chequea ANTES y por fuera del "if (!lexema_actual.empty())" de
-    // abajo porque el estado de comentario nunca acumula texto en
-    // lexema_actual (los caracteres del cuerpo del comentario usan la
-    // accion A_NONE, no A_ADD, ya que ese contenido se descarta de todos
-    // modos). Antes, este chequeo vivia adentro del "default" de mas abajo,
-    // protegido por "!lexema_actual.empty()", asi que con un comentario
-    // sin cerrar esa condicion daba SIEMPRE falso y el mensaje nunca se
-    // imprimia (quedaba como codigo muerto).
     if (estado_actual == 14 || estado_actual == 15 || estado_actual == 17) {
         std::cerr << "Error Léxico en línea " << LINEA_ACTUAL
         << ": comentario sin cerrar al final del archivo."
@@ -519,9 +509,9 @@ int main(int argc, char* argv[]) {
     int resultado = yyparse();
 
     if (resultado == 0) {
-        std::cout << ">>> Programa aceptado sintacticamente." << std::endl;
+        std::cout << ">>> El programa termino." << std::endl;
     } else {
-        std::cout << ">>> Se encontraron errores de sintaxis." << std::endl;
+        std::cout << ">>> El programa no se pudo recuperar del error." << std::endl;
     }
 
     // --- ESTADÍSTICAS Y TABLA DE SÍMBOLOS ---

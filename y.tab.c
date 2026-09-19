@@ -681,11 +681,11 @@ static const yytype_int16 yyrline[] =
      196,   197,   198,   199,   200,   201,   205,   210,   220,   225,
      230,   237,   247,   248,   252,   257,   267,   272,   277,   287,
      288,   292,   296,   297,   298,   299,   300,   301,   305,   310,
-     316,   336,   341,   353,   354,   355,   359,   360,   361,   365,
-     366,   367,   378,   395,   396,   397,   401,   402,   403,   407,
-     408,   409,   413,   414,   415,   426,   443,   444,   448,   449,
-     453,   454,   464,   465,   469,   470,   477,   481,   482,   486,
-     487,   491,   492
+     316,   327,   332,   344,   345,   346,   350,   351,   352,   356,
+     357,   358,   369,   388,   389,   390,   394,   395,   396,   400,
+     401,   402,   406,   407,   408,   419,   436,   437,   441,   442,
+     446,   447,   457,   458,   462,   463,   470,   474,   475,   479,
+     480,   484,   485
 };
 #endif
 
@@ -1701,46 +1701,37 @@ yyreduce:
   case 70: /* seleccion: PR_IF error ';'  */
 #line 317 "gramatica.y"
       {
-          // Sincronizamos en el ';' mas cercano, igual que el resto de
-          // las reglas de error de esta gramatica (asignacion,
-          // sent_decl_lista, repeat_while, etc.). Antes esta regla exigia
-          // encontrar literalmente un PR_END_IF para poder recuperarse:
-          // si el 'end_if' faltaba en todo el archivo, el parser quedaba
-          // sin forma de resincronizar y terminaba en un error fatal
-          // (que ademas no se imprimia, por el bug de yyerror() vacio).
-          // Con ';' como sincronismo, cualquier 'if' mal formado -con o
-          // sin 'end_if'- se recupera igual.
           std::cerr << "Linea " << LINEA_ACTUAL
                     << ": Error: sentencia 'if' mal formada, incompleta, "
                     << "o le falta 'end_if'."
                     << std::endl;
           yyerrok;
       }
-#line 1720 "y.tab.c"
+#line 1711 "y.tab.c"
     break;
 
   case 71: /* repeat_while: PR_REPEAT bloque_sent_ejec PR_WHILE '(' condicion ')' ';'  */
-#line 337 "gramatica.y"
+#line 328 "gramatica.y"
       {
           std::cout << "Sentencia REPEAT-WHILE (linea "
                     << LINEA_ACTUAL << ")" << std::endl;
       }
-#line 1729 "y.tab.c"
+#line 1720 "y.tab.c"
     break;
 
   case 72: /* repeat_while: PR_REPEAT error ';'  */
-#line 342 "gramatica.y"
+#line 333 "gramatica.y"
       {
           std::cerr << "Linea " << LINEA_ACTUAL
                     << ": Error: sentencia 'repeat-while' mal formada."
                     << std::endl;
           yyerrok;
       }
-#line 1740 "y.tab.c"
+#line 1731 "y.tab.c"
     break;
 
   case 81: /* factor: '-' CTE_INT  */
-#line 368 "gramatica.y"
+#line 359 "gramatica.y"
       {
           std::cerr << "Linea " << LINEA_ACTUAL
                     << ": Error semantico: la constante '"
@@ -1751,32 +1742,34 @@ yyreduce:
 
           (yyval.ts_ref) = (yyvsp[0].ts_ref);
       }
-#line 1755 "y.tab.c"
+#line 1746 "y.tab.c"
     break;
 
   case 82: /* factor: '-' CTE_FLOAT  */
-#line 379 "gramatica.y"
-      {
-          std::string lexema_neg = "-" + (yyvsp[0].ts_ref)->lexema;
-
-          auto it = tabla_simbolos.find(lexema_neg);
-
-          if (it == tabla_simbolos.end()) {
-              EntradaTS nueva_entrada;
-              nueva_entrada.lexema = lexema_neg;
-
-              it = tabla_simbolos.insert(
-                  {lexema_neg, nueva_entrada}
-              ).first;
-          }
-
-          (yyval.ts_ref) = &(it->second);
-      }
-#line 1776 "y.tab.c"
+#line 370 "gramatica.y"
+        {
+            std::string lexema_neg = "-" + (yyvsp[0].ts_ref)->lexema;
+      
+            tabla_simbolos.erase((yyvsp[0].ts_ref)->lexema);
+      
+            auto it = tabla_simbolos.find(lexema_neg);
+      
+            if (it == tabla_simbolos.end()) {
+                EntradaTS nueva_entrada;
+                nueva_entrada.lexema = lexema_neg;
+      
+                it = tabla_simbolos.insert(
+                    {lexema_neg, nueva_entrada}
+                ).first;
+            }
+      
+            (yyval.ts_ref) = &(it->second);
+        }
+#line 1769 "y.tab.c"
     break;
 
   case 94: /* factor_restr: '-' CTE_INT  */
-#line 416 "gramatica.y"
+#line 409 "gramatica.y"
       {
           std::cerr << "Linea " << LINEA_ACTUAL
                     << ": Error semantico: la constante '"
@@ -1787,11 +1780,11 @@ yyreduce:
 
           (yyval.ts_ref) = (yyvsp[0].ts_ref);
       }
-#line 1791 "y.tab.c"
+#line 1784 "y.tab.c"
     break;
 
   case 95: /* factor_restr: '-' CTE_FLOAT  */
-#line 427 "gramatica.y"
+#line 420 "gramatica.y"
       {
           std::string lexema_neg = "-" + (yyvsp[0].ts_ref)->lexema;
 
@@ -1808,33 +1801,33 @@ yyreduce:
 
           (yyval.ts_ref) = &(it->second);
       }
-#line 1812 "y.tab.c"
+#line 1805 "y.tab.c"
     break;
 
   case 101: /* invocacion: ID '(' error ')' lista_ctes_opcional  */
-#line 455 "gramatica.y"
+#line 448 "gramatica.y"
       {
           std::cerr << "Linea " << LINEA_ACTUAL
                     << ": Error: invocacion a funcion mal formada."
                     << std::endl;
           yyerrok;
       }
-#line 1823 "y.tab.c"
+#line 1816 "y.tab.c"
     break;
 
   case 105: /* lista_ctes_opcional: '[' error ']'  */
-#line 471 "gramatica.y"
+#line 464 "gramatica.y"
       {
           std::cerr << "Linea " << LINEA_ACTUAL
                     << ": Error: lista de orden de evaluacion mal formada."
                     << std::endl;
           yyerrok;
       }
-#line 1834 "y.tab.c"
+#line 1827 "y.tab.c"
     break;
 
 
-#line 1838 "y.tab.c"
+#line 1831 "y.tab.c"
 
       default: break;
     }
@@ -2027,15 +2020,9 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 495 "gramatica.y"
+#line 488 "gramatica.y"
 
 
 void yyerror(const char *s) {
-    // Red de seguridad: cualquier error de sintaxis que NO haya sido
-    // capturado por una produccion 'error' especifica (mensaje propio +
-    // yyerrok) termina aca. Antes esta funcion no hacia nada, asi que un
-    // error sin regla de recuperacion (ej. un 'end_if' faltante en todo
-    // el archivo) quedaba completamente mudo: no se imprimia linea ni
-    // descripcion, solo se contaba silenciosamente.
     std::cerr << "Linea " << LINEA_ACTUAL << ": Error: " << s << std::endl;
 }

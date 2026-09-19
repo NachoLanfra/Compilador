@@ -315,15 +315,6 @@ seleccion
       }
     | PR_IF error ';'
       {
-          // Sincronizamos en el ';' mas cercano, igual que el resto de
-          // las reglas de error de esta gramatica (asignacion,
-          // sent_decl_lista, repeat_while, etc.). Antes esta regla exigia
-          // encontrar literalmente un PR_END_IF para poder recuperarse:
-          // si el 'end_if' faltaba en todo el archivo, el parser quedaba
-          // sin forma de resincronizar y terminaba en un error fatal
-          // (que ademas no se imprimia, por el bug de yyerror() vacio).
-          // Con ';' como sincronismo, cualquier 'if' mal formado -con o
-          // sin 'end_if'- se recupera igual.
           std::cerr << "Linea " << LINEA_ACTUAL
                     << ": Error: sentencia 'if' mal formada, incompleta, "
                     << "o le falta 'end_if'."
@@ -375,23 +366,25 @@ factor
 
           $$ = $2;
       }
-    | '-' CTE_FLOAT
-      {
-          std::string lexema_neg = "-" + $2->lexema;
-
-          auto it = tabla_simbolos.find(lexema_neg);
-
-          if (it == tabla_simbolos.end()) {
-              EntradaTS nueva_entrada;
-              nueva_entrada.lexema = lexema_neg;
-
-              it = tabla_simbolos.insert(
-                  {lexema_neg, nueva_entrada}
-              ).first;
-          }
-
-          $$ = &(it->second);
-      }
+	| '-' CTE_FLOAT
+        {
+            std::string lexema_neg = "-" + $2->lexema;
+      
+            tabla_simbolos.erase($2->lexema);
+      
+            auto it = tabla_simbolos.find(lexema_neg);
+      
+            if (it == tabla_simbolos.end()) {
+                EntradaTS nueva_entrada;
+                nueva_entrada.lexema = lexema_neg;
+      
+                it = tabla_simbolos.insert(
+                    {lexema_neg, nueva_entrada}
+                ).first;
+            }
+      
+            $$ = &(it->second);
+        }
     | invocacion
     | acceso_objeto
     | ID '=' '(' expresion_restr ')'
@@ -495,11 +488,5 @@ llamada_opcional
 %%
 
 void yyerror(const char *s) {
-    // Red de seguridad: cualquier error de sintaxis que NO haya sido
-    // capturado por una produccion 'error' especifica (mensaje propio +
-    // yyerrok) termina aca. Antes esta funcion no hacia nada, asi que un
-    // error sin regla de recuperacion (ej. un 'end_if' faltante en todo
-    // el archivo) quedaba completamente mudo: no se imprimia linea ni
-    // descripcion, solo se contaba silenciosamente.
     std::cerr << "Linea " << LINEA_ACTUAL << ": Error: " << s << std::endl;
 }
