@@ -1,0 +1,9 @@
+prog_sin_end
+
+ushortint a, b;
+doublef c;
+
+begin
+    a := 1$us;
+    b := a + 2$us;
+    c := 1.5 * 2.0;

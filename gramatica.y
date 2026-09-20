@@ -1,3 +1,4 @@
+%define parse.error verbose
 %{
 #include <iostream>
 #include <string>
@@ -35,6 +36,13 @@ prog
                     << ": Error: falta 'begin' o esta mal formada la seccion declarativa del programa."
                     << std::endl;
           yyerrok;
+      }
+    | ID sent_decl_lista PR_BEGIN sent_ejec_lista PR_END error
+      {
+      	  std::cerr << "Linea " << LINEA_ACTUAL
+      	            << ": Error: falta ';' despues del 'end' del programa."
+      	            << std::endl;
+      	  yyerrok;
       }
     ;
 
@@ -486,5 +494,11 @@ llamada_opcional
 %%
 
 void yyerror(const char *s) {
-    std::cerr << "Linea " << LINEA_ACTUAL << ": Error: " << s << std::endl;
+	if (std::string(s).find("unexpected end of file") != std::string::npos)
+		std::cerr << "Linea " << LINEA_ACTUAL
+		          << ": Error: fin de archivo inesperado. Verificar que el programa termine con "
+		          << "'end;' y que no haya sentencias o bloques sin cerrar"
+		          << std::endl;
+	else
+    	std::cerr << "Linea " << LINEA_ACTUAL << ": Error: " << s << std::endl;
 }

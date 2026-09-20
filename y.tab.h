@@ -115,7 +115,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 10 "gramatica.y"
+#line 11 "gramatica.y"
 
     EntradaTS *ts_ref;
 
