@@ -344,6 +344,7 @@ int yylex() {
                     if (token == ID) {
                         yylval.ts_ref = a_ts(lexema_actual);
                     }
+                    std::cout << "Token detectado en línea " << LINEA_ACTUAL << ": " << lexema_actual << std::endl;
                     return token;
                 }
                 case A_PR: {
@@ -358,6 +359,7 @@ int yylex() {
                         estado_actual = 0;
                         continue; 
                     }
+                    std::cout << "Token detectado en línea " << LINEA_ACTUAL << ": " << lexema_actual << std::endl;
                     return token;
                 }
                     
@@ -370,6 +372,7 @@ int yylex() {
                         continue; // Lo descarta y sigue leyendo
                     }
                     yylval.ts_ref = a_ts(lexema_actual);
+                    std::cout << "Token detectado en línea " << LINEA_ACTUAL << ": " << lexema_actual << std::endl;
                     return CTE_INT;
                     
                 case A_FLT:
@@ -381,11 +384,13 @@ int yylex() {
                         continue; // Lo descarta y sigue leyendo
                     }
                     yylval.ts_ref = a_ts(lexema_actual);
+                    std::cout << "Token detectado en línea " << LINEA_ACTUAL << ": " << lexema_actual << std::endl;
                     return CTE_FLOAT;
                     
                 case A_STR:
                     // Si es una cadena, lo agregamos a la tabla de simbolos y retornamos el token CTE_STR
                     yylval.ts_ref = a_ts(lexema_actual); 
+                    std::cout << "Token detectado en línea " << LINEA_ACTUAL << ": " << lexema_actual << std::endl;
                     return CTE_STR;
                     
                 case A_ATK: {
@@ -395,11 +400,13 @@ int yylex() {
                     if (it != tabla_operadores.end()) {
                         return it->second;
                     }
+                    std::cout << "Token detectado en línea " << LINEA_ACTUAL << ": " << lexema_actual[0] << std::endl;
                     return lexema_actual[0];
                 }
                 case A_RTK:
                     // Devuelve el caracter extra leído al archivo y cierra el token simple (ej: '<').
                     a_retract(archivo); 
+                    std::cout << "Token detectado en línea " << LINEA_ACTUAL << ": " << lexema_actual[0] << std::endl;
                     return lexema_actual[0]; 
                     
                 case A_NONE:
@@ -438,6 +445,7 @@ int yylex() {
                 if (token == ID) {
                     yylval.ts_ref = a_ts(lexema_actual);
                 }
+                std::cout << "Token detectado en línea " << LINEA_ACTUAL << ": " << lexema_actual << std::endl;
                 return token;
             }
             case A_PR: {
@@ -450,10 +458,12 @@ int yylex() {
                     lexema_actual = "";
                     return 0;
                 }
+                std::cout << "Token detectado en línea " << LINEA_ACTUAL << ": " << lexema_actual << std::endl;
                 return token;
             }
             case A_RTK:
                 // Si es un caracter especial, lo devolvemos directamente.
+                std::cout << "Token detectado en línea " << LINEA_ACTUAL << ": " << lexema_actual[0] << std::endl;
                 return lexema_actual[0];
             case A_FLT:
                 // Si es un flotante, lo agregamos a la tabla de simbolos y retornamos el token CTE_FLOAT
@@ -462,6 +472,7 @@ int yylex() {
                     return 0; 
                 }                
                 yylval.ts_ref = a_ts(lexema_actual);
+                std::cout << "Token detectado en línea " << LINEA_ACTUAL << ": " << lexema_actual << std::endl;
                 return CTE_FLOAT;
 
             case A_USH:
@@ -471,6 +482,7 @@ int yylex() {
                     return 0; 
                 }
                 yylval.ts_ref = a_ts(lexema_actual);
+                std::cout << "Token detectado en línea " << LINEA_ACTUAL << ": " << lexema_actual << std::endl;
                 return CTE_INT;    
                     
             default: // Si es un lexema incompleto, imprimimos un mensaje de error y descartamos el lexema, ejemplo: cadena sin cerrar, etc.
